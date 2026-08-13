@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../core/constants/app_color.dart';
+import 'applicant_details_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
@@ -21,12 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(title: const Text('DMT App')),
-          body: const Center(child: Text('Next Screen Placeholder')),
-        ),
-      ),
+      MaterialPageRoute(builder: (context) => ApplicantDetailsScreen()),
     );
   }
 
