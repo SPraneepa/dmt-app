@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/app_color.dart';
+import '../core/utils/pdf_generator.dart';
+import '../models/appointment_model.dart';
 import '../providers/appointment_provider.dart';
 import 'applicant_details_screen.dart';
 
@@ -108,7 +110,39 @@ class SuccessScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
+
+            // Download PDF Button
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 48),
+                backgroundColor: AppColors.primaryMaroon,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+              onPressed: () {
+                final currentAppointment = AppointmentModel(
+                  nic: provider.nic,
+                  fullName: provider.fullName,
+                  phoneNumber: provider.phoneNumber,
+                  service: provider.selectedService,
+                  district: provider.selectedDistrict,
+                  date: provider.selectedDate,
+                  timeSlot: provider.selectedTimeSlot,
+                );
+                PdfGenerator.generateAndPrintReceipt(currentAppointment);
+              },
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+              label: const Text(
+                'Export Receipt as PDF',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
 
             // Book another button
             OutlinedButton(

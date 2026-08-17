@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/app_color.dart';
 import '../providers/appointment_provider.dart';
@@ -18,7 +19,6 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
   final _phoneController = TextEditingController();
 
   bool _isPhoneVerified = false;
-  bool _isVerifyingOtp = false;
 
   @override
   void dispose() {
@@ -194,12 +194,19 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _nameController,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[a-zA-Z\s\.]'),
+                        ),
+                      ],
                       decoration: const InputDecoration(
                         labelText: 'Full Name (as on NIC)',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (v) =>
-                          (v == null || v.isEmpty) ? 'Enter full name' : null,
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Enter full name'
+                          : null,
                     ),
                   ],
                 ),
@@ -228,13 +235,17 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                     TextFormField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
+                      ],
                       decoration: const InputDecoration(
                         labelText: 'Phone Number',
                         hintText: '07X XXXXXXX',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (v) => (v == null || v.length < 10)
-                          ? 'Enter valid phone number'
+                      validator: (v) => (v == null || v.length != 10)
+                          ? 'Enter valid 10-digit phone number'
                           : null,
                     ),
                     const SizedBox(height: 12),
@@ -269,12 +280,14 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                               ),
                             ),
                             onPressed: () {
-                              if (_phoneController.text.length >= 10) {
+                              if (_phoneController.text.length == 10) {
                                 _showOtpModal();
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Enter phone number first.'),
+                                    content: Text(
+                                      'Enter 10-digit phone number first.',
+                                    ),
                                   ),
                                 );
                               }
