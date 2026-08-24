@@ -89,6 +89,7 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: AppColors.primaryMaroon,
         title: const Text(
           'Department of Motor Traffic',
@@ -243,6 +244,7 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                                 value: _selectedDistrict,
                                 hint: const Text('Select District'),
                                 isExpanded: true,
+                                menuMaxHeight: 200,
                                 decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   contentPadding: EdgeInsets.symmetric(

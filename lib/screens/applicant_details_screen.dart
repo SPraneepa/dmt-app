@@ -184,12 +184,28 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _nicController,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9vVxX]')),
+                        LengthLimitingTextInputFormatter(12),
+                      ],
                       decoration: const InputDecoration(
                         labelText: 'NIC Number',
+                        hintText: '123456789V or 199012345678',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (v) =>
-                          (v == null || v.isEmpty) ? 'Enter valid NIC' : null,
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return 'Enter NIC number';
+                        }
+                        final nic = v.trim();
+                        final nicRegex = RegExp(
+                          r'^([0-9]{9}[vVxX]|[0-9]{12})$',
+                        );
+                        if (!nicRegex.hasMatch(nic)) {
+                          return 'Enter valid NIC (e.g. 123456789V or 199012345678)';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -244,9 +260,16 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                         hintText: '07X XXXXXXX',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (v) => (v == null || v.length != 10)
-                          ? 'Enter valid 10-digit phone number'
-                          : null,
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Enter phone number';
+                        }
+                        final phoneRegex = RegExp(r'^07[0-9]{8}$');
+                        if (!phoneRegex.hasMatch(v)) {
+                          return 'Phone number must start with 07 and have 10 digits';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     _isPhoneVerified
@@ -280,13 +303,14 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                               ),
                             ),
                             onPressed: () {
-                              if (_phoneController.text.length == 10) {
+                              final phoneRegex = RegExp(r'^07[0-9]{8}$');
+                              if (phoneRegex.hasMatch(_phoneController.text)) {
                                 _showOtpModal();
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Enter 10-digit phone number first.',
+                                      'Enter a valid 10-digit phone number starting with 07.',
                                     ),
                                   ),
                                 );

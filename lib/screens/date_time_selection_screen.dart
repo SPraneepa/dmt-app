@@ -81,6 +81,7 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: AppColors.primaryMaroon,
         title: const Text(
           'Department of Motor Traffic',

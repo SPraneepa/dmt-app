@@ -62,6 +62,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: AppColors.primaryMaroon,
         title: const Text(
           'Department of Motor Traffic - Sri Lanka',
