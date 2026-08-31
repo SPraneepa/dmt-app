@@ -7,6 +7,7 @@ import '../../providers/auth_provider.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/labeled_text_field.dart';
 import 'signup_screen.dart';
+import '../home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,9 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = false);
 
     if (success && mounted) {
-      ScaffoldMessenger.of(
+      Navigator.pushReplacement(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Logged in successfully!')));
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Invalid credentials. Please try again.')),

@@ -20,6 +20,9 @@ class AppointmentProvider extends ChangeNotifier {
   List<AppointmentModel> myBookings = [];
   bool isLoading = false;
 
+  AppointmentModel? get activeBooking =>
+      myBookings.isNotEmpty ? myBookings.last : null;
+
   void updateApplicantDetails({
     required String nic,
     required String fullName,
