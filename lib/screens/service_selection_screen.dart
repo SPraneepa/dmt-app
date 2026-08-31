@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../core/constants/app_color.dart';
 import '../providers/appointment_provider.dart';
+import '../widgets/custom_button.dart';
 import 'date_time_selection_screen.dart';
 
 class ServiceSelectionScreen extends StatefulWidget {
@@ -85,18 +87,33 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
     }
   }
 
+  InputDecoration _dropdownDecoration() {
+    return InputDecoration(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: AppColors.cardBorder),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: AppColors.cardBorder),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primaryMaroon,
-        title: const Text(
-          'Department of Motor Traffic',
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
+        title: const Text('Department of Motor Traffic'),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SafeArea(
         child: Padding(
@@ -111,25 +128,22 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Select Preferred Office and Required Service',
-                          style: TextStyle(
-                            fontSize: 18,
+                          style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primaryMaroon,
+                            color: theme.primaryColor,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Select the service category, specific service, and your preferred district office. Availability varies by location.',
-                          style: TextStyle(
+                          style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.grey.shade700,
-                            fontSize: 13,
                           ),
                         ),
                         const SizedBox(height: 24),
 
-                        // Selection Form Card
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -140,7 +154,6 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // 1. Service Category
                               const Text(
                                 'Service Category',
                                 style: TextStyle(
@@ -153,13 +166,7 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                                 value: _selectedCategory,
                                 hint: const Text('Select Category'),
                                 isExpanded: true,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 12,
-                                  ),
-                                ),
+                                decoration: _dropdownDecoration(),
                                 items: _serviceMap.keys.map((category) {
                                   return DropdownMenuItem(
                                     value: category,
@@ -182,7 +189,6 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                               ),
                               const SizedBox(height: 16),
 
-                              // 2. Specific Sub-Service
                               const Text(
                                 'Specific Service',
                                 style: TextStyle(
@@ -199,14 +205,7 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                                       : 'Select Specific Service',
                                 ),
                                 isExpanded: true,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                // Dynamically load items based on selected category
+                                decoration: _dropdownDecoration(),
                                 items: _selectedCategory == null
                                     ? []
                                     : _serviceMap[_selectedCategory]!.map((
@@ -231,7 +230,6 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                               ),
                               const SizedBox(height: 16),
 
-                              // 3. District Office
                               const Text(
                                 'District Office',
                                 style: TextStyle(
@@ -245,13 +243,7 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                                 hint: const Text('Select District'),
                                 isExpanded: true,
                                 menuMaxHeight: 200,
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 12,
-                                  ),
-                                ),
+                                decoration: _dropdownDecoration(),
                                 items: _districts.map((district) {
                                   return DropdownMenuItem(
                                     value: district,
@@ -276,36 +268,21 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                   ),
                 ),
 
-                // Navigation Controls (Back & Next)
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(0, 48),
-                          side: const BorderSide(
-                            color: AppColors.primaryMaroon,
-                          ),
-                        ),
+                      child: CustomButton(
+                        text: 'Back',
+                        isPrimary: false,
                         onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Back',
-                          style: TextStyle(color: AppColors.primaryMaroon),
-                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(0, 48),
-                          backgroundColor: AppColors.primaryMaroon,
-                        ),
+                      child: CustomButton(
+                        text: 'Next',
+                        isPrimary: true,
                         onPressed: _onNextPressed,
-                        child: const Text(
-                          'Next',
-                          style: TextStyle(color: Colors.white),
-                        ),
                       ),
                     ),
                   ],

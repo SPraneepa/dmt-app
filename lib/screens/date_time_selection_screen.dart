@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../core/constants/app_color.dart';
 import '../providers/appointment_provider.dart';
+import '../widgets/custom_button.dart';
 import 'confirmation_screen.dart';
 
 class DateTimeSelectionScreen extends StatefulWidget {
@@ -78,39 +80,35 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<AppointmentProvider>();
     final formattedDateStr = DateFormat('E, dd MMM yyyy').format(_selectedDate);
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primaryMaroon,
-        title: const Text(
-          'Department of Motor Traffic',
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
+        title: const Text('Department of Motor Traffic'),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Choose Appointment Date and Time Slot',
-              style: TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.primaryMaroon,
+                color: theme.primaryColor,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               'Pick an available day, then select a time slot. Offices are open Monday–Saturday.',
-              style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey.shade700,
+              ),
             ),
             const SizedBox(height: 20),
 
-            // Date Picker Card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -161,7 +159,6 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Available Slots Area
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -245,34 +242,21 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Navigation Row
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                      side: const BorderSide(color: AppColors.primaryMaroon),
-                    ),
+                  child: CustomButton(
+                    text: 'Back',
+                    isPrimary: false,
                     onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Back',
-                      style: TextStyle(color: AppColors.primaryMaroon),
-                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                      backgroundColor: AppColors.primaryMaroon,
-                    ),
+                  child: CustomButton(
+                    text: 'Next',
+                    isPrimary: true,
                     onPressed: _onNextPressed,
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(color: Colors.white),
-                    ),
                   ),
                 ),
               ],

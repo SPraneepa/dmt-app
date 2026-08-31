@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../core/constants/app_color.dart';
 import '../providers/appointment_provider.dart';
+import '../widgets/custom_button.dart';
 import 'service_selection_screen.dart';
 
 class ApplicantDetailsScreen extends StatefulWidget {
@@ -69,40 +70,29 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
+            CustomButton(
+              text: 'Verify',
               width: double.infinity,
               height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryMaroon,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () {
-                  if (otpController.text == '1234') {
-                    setState(() {
-                      _isPhoneVerified = true;
-                    });
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Phone number verified successfully!'),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Invalid OTP. Use 1234 for demo.'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text(
-                  'Verify',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
+              onPressed: () {
+                if (otpController.text == '1234') {
+                  setState(() {
+                    _isPhoneVerified = true;
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Phone number verified successfully!'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Invalid OTP. Use 1234 for demo.'),
+                    ),
+                  );
+                }
+              },
             ),
           ],
         ),
@@ -138,13 +128,8 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryMaroon,
-        title: const Text(
-          'Department of Motor Traffic',
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
+        title: const Text('Department of Motor Traffic'),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -153,12 +138,11 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Applicant Details',
-                style: TextStyle(
-                  fontSize: 20,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.primaryMaroon,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 20),
@@ -295,13 +279,11 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                               ],
                             ),
                           )
-                        : OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              minimumSize: const Size(double.infinity, 48),
-                              side: const BorderSide(
-                                color: AppColors.primaryMaroon,
-                              ),
-                            ),
+                        : CustomButton(
+                            text: 'Send OTP Code',
+                            isPrimary: false,
+                            width: double.infinity,
+                            height: 48,
                             onPressed: () {
                               final phoneRegex = RegExp(r'^07[0-9]{8}$');
                               if (phoneRegex.hasMatch(_phoneController.text)) {
@@ -316,10 +298,6 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                                 );
                               }
                             },
-                            child: const Text(
-                              'Send OTP Code',
-                              style: TextStyle(color: AppColors.primaryMaroon),
-                            ),
                           ),
                   ],
                 ),
@@ -327,26 +305,11 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
               const SizedBox(height: 30),
 
               // Next Button
-              SizedBox(
+              CustomButton(
+                text: 'Next',
                 width: double.infinity,
                 height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryMaroon,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: _onNextPressed,
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+                onPressed: _onNextPressed,
               ),
             ],
           ),

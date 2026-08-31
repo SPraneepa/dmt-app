@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../core/constants/app_color.dart';
 import '../core/utils/pdf_generator.dart';
 import '../models/appointment_model.dart';
 import '../providers/appointment_provider.dart';
+import '../widgets/custom_button.dart';
 import 'applicant_details_screen.dart';
 
 class SuccessScreen extends StatelessWidget {
@@ -12,14 +14,11 @@ class SuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppointmentProvider>();
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primaryMaroon,
-        title: const Text(
-          'Department of Motor Traffic',
-          style: TextStyle(color: Colors.white, fontSize: 16),
-        ),
+        title: const Text('Department of Motor Traffic'),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -37,11 +36,10 @@ class SuccessScreen extends StatelessWidget {
               child: const Icon(Icons.check, size: 40, color: Colors.white),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Appointment Booking Completed Successfully!',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppColors.textDark,
               ),
@@ -50,11 +48,12 @@ class SuccessScreen extends StatelessWidget {
             Text(
               'A confirmation SMS has been sent to your verified number. Please arrive 10 minutes early.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey.shade700,
+              ),
             ),
             const SizedBox(height: 24),
 
-            // Confirmation Summary Card
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -112,15 +111,9 @@ class SuccessScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Download PDF Button
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-                backgroundColor: AppColors.primaryMaroon,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
+            CustomButton(
+              text: 'Export Receipt as PDF',
+              isPrimary: true,
               onPressed: () {
                 final currentAppointment = AppointmentModel(
                   nic: provider.nic,
@@ -133,26 +126,12 @@ class SuccessScreen extends StatelessWidget {
                 );
                 PdfGenerator.generateAndPrintReceipt(currentAppointment);
               },
-              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
-              label: const Text(
-                'Export Receipt as PDF',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
             const SizedBox(height: 12),
 
-            // Book another button
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 48),
-                side: const BorderSide(color: AppColors.primaryMaroon),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
+            CustomButton(
+              text: 'Book another appointment',
+              isPrimary: false,
               onPressed: () {
                 Navigator.pushAndRemoveUntil(
                   context,
@@ -162,13 +141,6 @@ class SuccessScreen extends StatelessWidget {
                   (route) => false,
                 );
               },
-              child: const Text(
-                'Book another appointment',
-                style: TextStyle(
-                  color: AppColors.primaryMaroon,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
           ],
         ),

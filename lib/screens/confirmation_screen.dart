@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../core/constants/app_color.dart';
 import '../providers/appointment_provider.dart';
+import '../widgets/custom_button.dart';
 import 'success_screen.dart';
 
 class ConfirmationScreen extends StatefulWidget {
@@ -59,39 +61,35 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppointmentProvider>();
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: AppColors.primaryMaroon,
-        title: const Text(
-          'Department of Motor Traffic - Sri Lanka',
-          style: TextStyle(color: Colors.white, fontSize: 15),
-        ),
+        title: const Text('Department of Motor Traffic - Sri Lanka'),
         centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'View Information and Confirm Appointment',
-              style: TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.primaryMaroon,
+                color: theme.primaryColor,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               'Check the details below before confirming. Once booked, you\'ll receive an SMS confirmation.',
-              style: TextStyle(color: Colors.grey.shade700, fontSize: 13),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey.shade700,
+              ),
             ),
             const SizedBox(height: 20),
 
-            // Details Container
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -129,7 +127,6 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                   _buildDetailRow('Office', provider.selectedDistrict),
                   const SizedBox(height: 16),
 
-                  // Slot Highlight Card
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -207,7 +204,6 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Checkbox consent
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -232,43 +228,22 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Navigation Row
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                      side: const BorderSide(color: AppColors.primaryMaroon),
-                    ),
+                  child: CustomButton(
+                    text: 'Back',
+                    isPrimary: false,
                     onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Back',
-                      style: TextStyle(color: AppColors.primaryMaroon),
-                    ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(0, 48),
-                      backgroundColor: AppColors.primaryMaroon,
-                    ),
-                    onPressed: provider.isLoading ? null : _onConfirmPressed,
-                    child: provider.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            'Confirm Booking',
-                            style: TextStyle(color: Colors.white),
-                          ),
+                  child: CustomButton(
+                    text: 'Confirm Booking',
+                    isPrimary: true,
+                    isLoading: provider.isLoading,
+                    onPressed: _onConfirmPressed,
                   ),
                 ),
               ],

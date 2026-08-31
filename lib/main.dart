@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'core/constants/app_color.dart';
+import 'core/theme/app_theme.dart';
 import 'providers/appointment_provider.dart';
 import 'repositories/mock_appointment_repository.dart';
 import 'screens/splash_screen.dart';
@@ -26,11 +26,7 @@ class DMTApp extends StatelessWidget {
     return MaterialApp(
       title: 'DMT Mobile',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: AppColors.primaryMaroon,
-        scaffoldBackgroundColor: AppColors.lightBackground,
-        useMaterial3: true,
-      ),
+      theme: appTheme,
       home: const SplashScreen(),
     );
   }
