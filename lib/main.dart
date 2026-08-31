@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'core/theme/app_theme.dart';
 import 'providers/appointment_provider.dart';
+import 'providers/auth_provider.dart';
 import 'repositories/mock_appointment_repository.dart';
 import 'screens/splash_screen.dart';
 
@@ -12,6 +14,7 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => AppointmentProvider(MockAppointmentRepository()),
         ),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const DMTApp(),
     ),
@@ -26,7 +29,7 @@ class DMTApp extends StatelessWidget {
     return MaterialApp(
       title: 'DMT Mobile',
       debugShowCheckedModeBanner: false,
-      theme: appTheme,
+      theme: AppTheme.lightTheme,
       home: const SplashScreen(),
     );
   }

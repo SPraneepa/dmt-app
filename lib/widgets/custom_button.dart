@@ -25,13 +25,21 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool enabled = !isLoading && onPressed != null;
-    final Color backgroundColor = isPrimary ? AppColors.primaryMaroon : Colors.white;
-    final Color foregroundColor = isPrimary ? Colors.white : AppColors.primaryMaroon;
-    final Color borderColor = isPrimary ? AppColors.primaryMaroon : AppColors.primaryMaroon;
+    final Color backgroundColor = isPrimary
+        ? AppColors.primaryMaroon
+        : Colors.white;
+    final Color foregroundColor = isPrimary
+        ? Colors.white
+        : AppColors.primaryMaroon;
+    final Color borderColor = isPrimary
+        ? AppColors.primaryMaroon
+        : AppColors.primaryMaroon;
+
+    final double buttonHeight = height.clamp(50, 54).toDouble();
 
     return SizedBox(
-      width: width,
-      height: height,
+      width: width ?? double.infinity,
+      height: buttonHeight,
       child: isPrimary
           ? ElevatedButton(
               onPressed: enabled ? onPressed : null,
@@ -41,6 +49,7 @@ class CustomButton extends StatelessWidget {
                 disabledBackgroundColor: AppColors.cardBorder,
                 disabledForegroundColor: Colors.white,
                 elevation: 0,
+                minimumSize: Size(width ?? double.infinity, buttonHeight),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
@@ -70,6 +79,7 @@ class CustomButton extends StatelessWidget {
                 side: BorderSide(color: borderColor, width: 1.2),
                 disabledForegroundColor: AppColors.cardBorder,
                 disabledBackgroundColor: Colors.white,
+                minimumSize: Size(width ?? double.infinity, buttonHeight),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
@@ -80,7 +90,9 @@ class CustomButton extends StatelessWidget {
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryMaroon),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.primaryMaroon,
+                        ),
                       ),
                     )
                   : Text(

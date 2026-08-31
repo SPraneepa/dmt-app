@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart';
+
+class AppSizes {
+  static const double xs = 8;
+  static const double sm = 12;
+  static const double md = 16;
+  static const double lg = 20;
+  static const double xl = 24;
+  static const double xxl = 36;
+
+  static const EdgeInsets screenPadding = EdgeInsets.symmetric(
+    horizontal: xl,
+    vertical: xxl,
+  );
+}

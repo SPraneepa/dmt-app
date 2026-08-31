@@ -13,6 +13,22 @@ final ThemeData appTheme = ThemeData(
     surface: AppColors.lightBackground,
     brightness: Brightness.light,
   ),
+  textTheme: ThemeData.light().textTheme.copyWith(
+    headlineSmall: const TextStyle(
+      fontWeight: FontWeight.bold,
+      color: AppColors.textPrimary,
+    ),
+    titleMedium: const TextStyle(
+      fontWeight: FontWeight.bold,
+      color: AppColors.primaryMaroon,
+    ),
+    bodyMedium: const TextStyle(color: AppColors.textSecondary),
+    bodySmall: const TextStyle(color: AppColors.textSecondary),
+    labelLarge: const TextStyle(
+      fontWeight: FontWeight.w600,
+      color: AppColors.textPrimary,
+    ),
+  ),
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.primaryMaroon,
     foregroundColor: Colors.white,
@@ -27,17 +43,17 @@ final ThemeData appTheme = ThemeData(
   ),
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: Colors.white,
-    hintStyle: TextStyle(color: AppColors.textDark.withOpacity(0.55)),
+    fillColor: Colors.grey[100],
+    hintStyle: const TextStyle(color: AppColors.textMuted),
     labelStyle: const TextStyle(color: AppColors.textDark),
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.cardBorder),
+      borderSide: BorderSide(color: Colors.grey[300]!),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.cardBorder),
+      borderSide: BorderSide(color: Colors.grey[300]!),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -72,3 +88,7 @@ final ThemeData appTheme = ThemeData(
     ),
   ),
 );
+
+class AppTheme {
+  static final ThemeData lightTheme = appTheme;
+}
