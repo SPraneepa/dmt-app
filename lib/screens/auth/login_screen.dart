@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Text('Log In', style: theme.textTheme.headlineSmall),
                     const SizedBox(height: AppSizes.xs),
                     Text(
-                      'Hi! Welcome back to DMT Appointment booking app',
+                      'Hi! Welcome to DMT Appointment booking app',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.bodyMedium,
                     ),

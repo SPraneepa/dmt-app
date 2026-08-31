@@ -1,3 +1,5 @@
+import 'package:dmt_app/screens/applicant_details_screen.dart';
+import 'package:dmt_app/screens/service_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +23,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: AppSizes.sm),
+              //const SizedBox(height: AppSizes.sm),
               _buildHeader(),
               const SizedBox(height: AppSizes.md),
               if (activeBooking == null)
@@ -340,9 +342,16 @@ class HomeScreen extends StatelessWidget {
             backgroundColor: AppColors.primaryMaroon,
             shape: const StadiumBorder(),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ApplicantDetailsScreen(),
+              ),
+            );
+          },
           child: const Text(
-            'Booking Now',
+            'Book Now',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
