@@ -1,14 +1,34 @@
 import 'package:dmt_app/screens/applicant_details_screen.dart';
-import 'package:dmt_app/screens/service_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants/app_color.dart';
 import '../core/constants/app_sizes.dart';
+import '../models/appointment_model.dart';
 import '../providers/appointment_provider.dart';
+
+class ServiceItem {
+  final IconData icon;
+  final String title;
+
+  const ServiceItem({required this.icon, required this.title});
+}
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  static const List<ServiceItem> _availableServices = [
+    ServiceItem(
+      icon: Icons.assignment_outlined,
+      title: 'Driving License Renewal',
+    ),
+    ServiceItem(icon: Icons.badge_outlined, title: 'New Driving License'),
+    ServiceItem(
+      icon: Icons.directions_car_outlined,
+      title: 'Vehicle Registration',
+    ),
+    ServiceItem(icon: Icons.info_outline, title: 'Driving License Information'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +36,19 @@ class HomeScreen extends StatelessWidget {
     final activeBooking = appointmentProvider.activeBooking;
 
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: AppSizes.screenPadding,
+          padding: const EdgeInsets.fromLTRB(
+            AppSizes.xl,
+            AppSizes.xl,
+            AppSizes.xl,
+            AppSizes.xxl + AppSizes.lg,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              //const SizedBox(height: AppSizes.sm),
-              _buildHeader(),
+              _buildHeader(activeBooking),
               const SizedBox(height: AppSizes.md),
               if (activeBooking == null)
                 _buildAvailableServicesCard()
@@ -36,7 +60,7 @@ class HomeScreen extends StatelessWidget {
               if (activeBooking == null)
                 _buildBookingNowButton(context)
               else
-                _buildBookingStatusBanner(),
+                _buildBookingStatusBanner(activeBooking),
               const SizedBox(height: AppSizes.xl),
               Text(
                 'Previous Bookings',
@@ -55,19 +79,21 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppointmentModel? booking) {
+    final String displayName = booking?.userName ?? 'Guest User';
+
     return Row(
       children: [
         const CircleAvatar(
           radius: 20,
-          backgroundColor: AppColors.primaryMaroon,
+          backgroundColor: AppColors.primary,
           child: Icon(Icons.person, color: Colors.white),
         ),
         const SizedBox(width: AppSizes.sm),
-        const Text(
-          'R.P Kamal Perera',
-          style: TextStyle(
-            fontSize: 16,
+        Text(
+          displayName,
+          style: const TextStyle(
+            fontSize: AppSizes.textLabel,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,
           ),
@@ -82,7 +108,7 @@ class HomeScreen extends StatelessWidget {
           child: IconButton(
             icon: const Icon(
               Icons.notifications_none,
-              color: AppColors.primaryMaroon,
+              color: AppColors.primary,
             ),
             onPressed: () {},
           ),
@@ -96,7 +122,7 @@ class HomeScreen extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
-        color: AppColors.primaryMaroon,
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -104,35 +130,27 @@ class HomeScreen extends StatelessWidget {
           const Text(
             'AVAILABLE SERVICES',
             style: TextStyle(
-              color: Colors.white70,
+              color: Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
             ),
           ),
           const SizedBox(height: AppSizes.md),
-          GridView.count(
-            crossAxisCount: 2,
+          GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: AppSizes.sm,
-            mainAxisSpacing: AppSizes.sm,
-            childAspectRatio: 2.2,
-            children: [
-              _buildServiceItem(
-                Icons.assignment_outlined,
-                'Driving License Renewal',
-              ),
-              _buildServiceItem(Icons.badge_outlined, 'New Driving License'),
-              _buildServiceItem(
-                Icons.directions_car_outlined,
-                'Vehicle Registration',
-              ),
-              _buildServiceItem(
-                Icons.info_outline,
-                'Driving License Information',
-              ),
-            ],
+            itemCount: _availableServices.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: AppSizes.sm,
+              mainAxisSpacing: AppSizes.sm,
+              childAspectRatio: 2.2,
+            ),
+            itemBuilder: (context, index) {
+              final service = _availableServices[index];
+              return _buildServiceItem(service.icon, service.title);
+            },
           ),
         ],
       ),
@@ -142,7 +160,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildServiceItem(IconData icon, String title) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(AppSizes.xs),
@@ -165,12 +183,12 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveAppointmentCard(dynamic booking) {
+  Widget _buildActiveAppointmentCard(AppointmentModel booking) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
-        color: AppColors.primaryMaroon,
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -180,11 +198,11 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '👤 ${booking.userName ?? 'R.P Kamal Perera'}',
+                '👤 ${booking.userName}',
                 style: const TextStyle(color: Colors.white, fontSize: 13),
               ),
               Text(
-                '🆔 ${booking.nicNumber ?? ''}',
+                '🆔 ${booking.nicNumber}',
                 style: const TextStyle(color: Colors.white, fontSize: 13),
               ),
             ],
@@ -195,39 +213,55 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: _buildTokenBox(
                   'COUNTER',
-                  '${booking.counterNumber ?? 6}',
+                  '${booking.counterNumber ?? '-'}',
                 ),
               ),
               const SizedBox(width: AppSizes.sm),
               Expanded(
-                child: _buildTokenBox('#TOKEN', '${booking.tokenNumber ?? 15}'),
+                child: _buildTokenBox(
+                  '#TOKEN',
+                  '${booking.tokenNumber ?? '-'}',
+                ),
               ),
             ],
           ),
           const SizedBox(height: AppSizes.md),
           Text(
-            '🚗 ${booking.serviceName ?? ''}',
+            '🚗 ${booking.serviceName}',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 14,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            '📅 ${booking.date ?? ''}',
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
+            '📅 ${booking.date}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSizes.xs),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '🔆 Est. called - ${booking.estimatedTime ?? ''}',
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                '🔆 Est. called - ${booking.estimatedTime}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               Text(
-                '🏢 ${booking.location ?? 'Werahara'}',
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
+                '🏢 ${booking.location}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -240,7 +274,7 @@ class HomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppSizes.sm),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -267,11 +301,53 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCountdownTimer(dynamic booking) {
-    final days = booking != null ? '5' : '-';
-    final hours = booking != null ? '3' : '-';
-    final mins = booking != null ? '12' : '-';
-    final secs = booking != null ? '25' : '-';
+  Map<String, String> _calculateTimeRemaining(AppointmentModel? booking) {
+    if (booking == null || booking.date.isEmpty) {
+      return {'days': '-', 'hours': '-', 'mins': '-', 'secs': '-'};
+    }
+
+    DateTime? targetDate;
+
+    if (booking.date.contains(',')) {
+      targetDate = DateTime.tryParse(booking.date.replaceFirst(',', ''));
+    }
+
+    if (targetDate == null) {
+      targetDate = DateTime.tryParse(booking.date);
+    }
+
+    if (targetDate == null) {
+      final parsedParts = booking.date.split('-');
+      if (parsedParts.length == 3) {
+        final year = int.tryParse(parsedParts[0]);
+        final month = int.tryParse(parsedParts[1]);
+        final day = int.tryParse(parsedParts[2]);
+        if (year != null && month != null && day != null) {
+          targetDate = DateTime(year, month, day);
+        }
+      }
+    }
+
+    if (targetDate == null) {
+      return {'days': '0', 'hours': '0', 'mins': '0', 'secs': '0'};
+    }
+
+    final Duration difference = targetDate.difference(DateTime.now());
+
+    if (difference.isNegative) {
+      return {'days': '0', 'hours': '0', 'mins': '0', 'secs': '0'};
+    }
+
+    return {
+      'days': difference.inDays.toString(),
+      'hours': (difference.inHours % 24).toString().padLeft(2, '0'),
+      'mins': (difference.inMinutes % 60).toString().padLeft(2, '0'),
+      'secs': (difference.inSeconds % 60).toString().padLeft(2, '0'),
+    };
+  }
+
+  Widget _buildCountdownTimer(AppointmentModel? booking) {
+    final timeData = _calculateTimeRemaining(booking);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -288,13 +364,13 @@ class HomeScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildTimeUnit(days, 'DAYS'),
+              _buildTimeUnit(timeData['days']!, 'DAYS'),
               const Text('|', style: TextStyle(color: AppColors.divider)),
-              _buildTimeUnit(hours, 'HOURS'),
+              _buildTimeUnit(timeData['hours']!, 'HOURS'),
               const Text('|', style: TextStyle(color: AppColors.divider)),
-              _buildTimeUnit(mins, 'MINS'),
+              _buildTimeUnit(timeData['mins']!, 'MINS'),
               const Text('|', style: TextStyle(color: AppColors.divider)),
-              _buildTimeUnit(secs, 'SECS'),
+              _buildTimeUnit(timeData['secs']!, 'SECS'),
             ],
           ),
           const SizedBox(height: AppSizes.xs),
@@ -321,7 +397,7 @@ class HomeScreen extends StatelessWidget {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: AppColors.primaryMaroon,
+            color: AppColors.primary,
           ),
         ),
         Text(
@@ -336,11 +412,14 @@ class HomeScreen extends StatelessWidget {
     return Center(
       child: SizedBox(
         width: 220,
-        height: 48,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primaryMaroon,
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(220, 48),
+            padding: EdgeInsets.zero,
             shape: const StadiumBorder(),
+            elevation: 0,
           ),
           onPressed: () {
             Navigator.push(
@@ -350,28 +429,39 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           },
-          child: const Text(
-            'Book Now',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          child: const Center(
+            child: Text(
+              'Book Now',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBookingStatusBanner() {
+  Widget _buildBookingStatusBanner(AppointmentModel booking) {
+    final timeData = _calculateTimeRemaining(booking);
+    final daysText = timeData['days'] != '-'
+        ? '${timeData['days']} DAYS'
+        : 'SOON';
+
     return Center(
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.primaryMaroon.withOpacity(0.85),
+          color: AppColors.primary.withValues(alpha: 0.85),
           borderRadius: BorderRadius.circular(30),
         ),
-        child: const Text(
-          'NEXT BOOKING STARTS : 5 DAYS',
+        child: Text(
+          'NEXT BOOKING STARTS : $daysText',
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 14,
@@ -419,7 +509,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
       currentIndex: 0,
-      selectedItemColor: AppColors.primaryMaroon,
+      selectedItemColor: AppColors.primary,
       unselectedItemColor: AppColors.textSecondary,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),

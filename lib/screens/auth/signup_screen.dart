@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/app_color.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/labeled_text_field.dart';
@@ -51,8 +52,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -66,15 +65,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: AppSizes.lg),
-                    Text(
-                      'Create Account',
-                      style: theme.textTheme.headlineSmall,
-                    ),
+                    const Text('Create Account', style: AppTextStyles.heading),
                     const SizedBox(height: AppSizes.xs),
-                    Text(
+                    const Text(
                       'Fill your information below or register with your email',
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium,
+                      style: AppTextStyles.bodySecondary,
                     ),
                     const SizedBox(height: AppSizes.xxl),
 
@@ -94,10 +90,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       keyboardType: TextInputType.emailAddress,
                       hintText: 'example@gmail.com',
                       validator: (v) {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'Please enter your email';
-                        if (!v.contains('@'))
+                        }
+                        if (!v.contains('@')) {
                           return 'Enter a valid email address';
+                        }
                         return null;
                       },
                     ),
@@ -122,10 +120,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                       ),
                       validator: (v) {
-                        if (v == null || v.isEmpty)
+                        if (v == null || v.isEmpty) {
                           return 'Please enter a password';
-                        if (v.length < 8)
+                        }
+                        if (v.length < 8) {
                           return 'Password must be at least 8 characters';
+                        }
                         return null;
                       },
                     ),
@@ -135,7 +135,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       children: [
                         Checkbox(
                           value: _agreeToTerms,
-                          activeColor: AppColors.primaryMaroon,
+                          activeColor: AppColors.primary,
                           onChanged: (val) {
                             setState(() {
                               _agreeToTerms = val ?? false;
@@ -146,14 +146,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: Text.rich(
                             TextSpan(
                               text: 'Agree with ',
-                              style: theme.textTheme.bodySmall?.copyWith(
+                              style: AppTextStyles.caption.copyWith(
                                 color: AppColors.textSecondary,
                               ),
                               children: [
                                 TextSpan(
                                   text: 'Terms & Conditions',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: AppColors.primaryMaroon,
+                                  style: AppTextStyles.caption.copyWith(
+                                    color: AppColors.primary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -166,25 +166,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: AppSizes.md),
 
                     CustomButton(
-                      width: double.infinity,
-                      height: 52,
                       text: 'Sign Up',
                       isLoading: _isLoading,
-                      borderRadius: 30,
                       onPressed: _handleSignUp,
                     ),
                     const SizedBox(height: AppSizes.xl),
 
-                    Row(
+                    const Row(
                       children: [
                         Expanded(child: Divider(color: AppColors.divider)),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.xs,
                           ),
                           child: Text(
                             'or sign up with',
-                            style: theme.textTheme.bodySmall,
+                            style: AppTextStyles.caption,
                           ),
                         ),
                         Expanded(child: Divider(color: AppColors.divider)),
@@ -198,22 +195,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPressed: () {},
                         icon: Image.asset(
                           'assets/images/google_logo.png',
-                          height: 18,
-                          width: 18,
+                          height: AppSizes.iconSmall,
+                          width: AppSizes.iconSmall,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.g_mobiledata, size: 18),
+                              const Icon(
+                                Icons.g_mobiledata,
+                                size: AppSizes.iconMedium,
+                              ),
                         ),
                         label: const Text('Continue with Google'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.textPrimary,
-                          side: BorderSide(color: Colors.grey[300]!),
+                          side: const BorderSide(color: AppColors.border),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMedium,
+                            ),
                           ),
                         ),
                       ),
@@ -223,16 +220,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'Already have an account? ',
-                          style: theme.textTheme.bodyMedium,
+                          style: AppTextStyles.bodySecondary,
                         ),
                         GestureDetector(
                           onTap: () => Navigator.pop(context),
                           child: Text(
                             'Log In',
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: AppColors.primaryMaroon,
+                            style: AppTextStyles.label.copyWith(
+                              color: AppColors.primary,
                             ),
                           ),
                         ),

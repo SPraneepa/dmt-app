@@ -7,6 +7,8 @@ class AppointmentModel {
   final String district;
   final String date;
   final String timeSlot;
+  final String? counterNumber;
+  final String? tokenNumber;
 
   AppointmentModel({
     this.id,
@@ -17,7 +19,16 @@ class AppointmentModel {
     required this.district,
     required this.date,
     required this.timeSlot,
+    this.counterNumber,
+    this.tokenNumber,
   });
+
+  // Getters for HomeScreen compatibility
+  String get userName => fullName;
+  String get nicNumber => nic;
+  String get serviceName => service;
+  String get location => district;
+  String get estimatedTime => timeSlot;
 
   Map<String, dynamic> toJson() {
     return {
@@ -29,6 +40,8 @@ class AppointmentModel {
       'district': district,
       'date': date,
       'timeSlot': timeSlot,
+      'counterNumber': counterNumber,
+      'tokenNumber': tokenNumber,
     };
   }
 
@@ -42,6 +55,8 @@ class AppointmentModel {
       district: json['district'] ?? '',
       date: json['date'] ?? '',
       timeSlot: json['timeSlot'] ?? '',
+      counterNumber: json['counterNumber']?.toString(),
+      tokenNumber: json['tokenNumber']?.toString(),
     );
   }
 }

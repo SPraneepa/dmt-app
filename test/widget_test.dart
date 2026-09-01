@@ -1,30 +1,35 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:dmt_app/main.dart';
+import 'package:dmt_app/widgets/custom_button.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('app launches and shows splash screen content', (tester) async {
+    await tester.pumpWidget(const DMTApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('DEPARTMENT OF MOTOR TRAFFIC'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('primary custom buttons use zero padding and centered text', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CustomButton(text: 'Verify', onPressed: () {}),
+        ),
+      ),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    final button = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(button.style?.padding?.resolve({}), EdgeInsets.zero);
+    expect(
+      find.descendant(
+        of: find.byType(ElevatedButton),
+        matching: find.byType(Center),
+      ),
+      findsOneWidget,
+    );
   });
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants/app_color.dart';
+import '../core/constants/app_sizes.dart';
 import '../providers/appointment_provider.dart';
 import '../widgets/custom_button.dart';
 import 'success_screen.dart';
@@ -64,38 +65,42 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Department of Motor Traffic - Sri Lanka'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'View Information and Confirm Appointment',
-              style: theme.textTheme.titleMedium?.copyWith(
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: theme.primaryColor,
+                color: AppColors.textPrimary,
+                fontSize: 22,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               'Check the details below before confirming. Once booked, you\'ll receive an SMS confirmation.',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.grey.shade700,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+                height: 1.5,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSizes.lg),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.cardBorder),
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
+                border: Border.all(color: AppColors.border, width: 1.2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,33 +110,33 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+                      color: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSizes.sm),
                   _buildDetailRow('NIC', provider.nic),
                   _buildDetailRow('Name', provider.fullName),
                   _buildDetailRow('Phone Number', provider.phoneNumber),
-                  const Divider(height: 24),
+                  const Divider(height: 16),
 
                   const Text(
                     'APPOINTMENT',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+                      color: AppColors.textSecondary,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSizes.sm),
                   _buildDetailRow('Service', provider.selectedService),
                   _buildDetailRow('Office', provider.selectedDistrict),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppSizes.lg),
 
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.darkCard,
+                      color: AppColors.primaryDark,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -202,7 +207,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
 
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,21 +217,25 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                   width: 24,
                   child: Checkbox(
                     value: _agreedToTerms,
-                    activeColor: AppColors.primaryMaroon,
+                    activeColor: AppColors.primary,
                     onChanged: (v) =>
                         setState(() => _agreedToTerms = v ?? false),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSizes.sm),
                 Expanded(
                   child: Text(
                     'I confirm the above details are correct and I agree to the DMT booking terms. I understand that no-shows may result in a temporary ban.',
-                    style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textPrimary,
+                      height: 1.5,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
 
             Row(
               children: [
@@ -237,7 +246,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: AppSizes.lg),
                 Expanded(
                   child: CustomButton(
                     text: 'Confirm Booking',
@@ -260,12 +269,19 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
+          Text(
+            label,
+            style: const TextStyle(color: Color(0xFF333333), fontSize: 13),
+          ),
           Expanded(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              style: const TextStyle(
+                color: Color(0xFF111111),
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),

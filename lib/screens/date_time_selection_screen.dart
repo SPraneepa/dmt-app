@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants/app_color.dart';
+import '../core/constants/app_sizes.dart';
 import '../providers/appointment_provider.dart';
 import '../widgets/custom_button.dart';
 import 'confirmation_screen.dart';
@@ -83,111 +84,133 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Department of Motor Traffic'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Choose Appointment Date and Time Slot',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.primaryColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            AppSizes.xl,
+            AppSizes.xl,
+            AppSizes.xl,
+            AppSizes.xxl + AppSizes.lg,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Choose Appointment Date and Time Slot',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  fontSize: 22,
+                ),
               ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Pick an available day, then select a time slot. Offices are open Monday–Saturday.',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.grey.shade700,
+              const SizedBox(height: AppSizes.sm),
+              Text(
+                'Pick an available day, then select a time slot. Offices are open Monday–Saturday.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: AppSizes.xl),
 
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.cardBorder),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Select Date',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  InkWell(
-                    onTap: () => _selectDate(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            formattedDateStr,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Icon(
-                            Icons.calendar_today_rounded,
-                            color: AppColors.primaryMaroon,
-                            size: 20,
-                          ),
-                        ],
+              Container(
+                padding: const EdgeInsets.all(AppSizes.lg),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
+                  border: Border.all(color: AppColors.border, width: 1.2),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Select Date',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        fontSize: 14,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: AppSizes.sm),
+                    InkWell(
+                      onTap: () => _selectDate(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSizes.lg,
+                          vertical: AppSizes.lg,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.border,
+                            width: 1.2,
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusSmall,
+                          ),
+                          color: AppColors.inputFill,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              formattedDateStr,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.calendar_today_rounded,
+                              color: AppColors.primary,
+                              size: AppSizes.iconMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: AppSizes.xl),
 
-            Expanded(
-              child: Container(
+              Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(AppSizes.lg),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.cardBorder),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
+                  border: Border.all(color: AppColors.border, width: 1.2),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Available Time Slots for ${DateFormat('E, dd MMM').format(_selectedDate)}',
-                      style: const TextStyle(
-                        fontSize: 15,
+                      style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        fontSize: 15,
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSizes.lg),
                     provider.isLoading
-                        ? const Expanded(
+                        ? const SizedBox(
+                            height: 200,
                             child: Center(
                               child: CircularProgressIndicator(
-                                color: AppColors.primaryMaroon,
+                                color: AppColors.primary,
                               ),
                             ),
                           )
-                        : Expanded(
+                        : SizedBox(
+                            height: 220,
                             child: GridView.builder(
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
@@ -208,13 +231,13 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? AppColors.primaryMaroon
-                                          : Colors.white,
+                                          ? AppColors.primary
+                                          : AppColors.surface,
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                         color: isSelected
-                                            ? AppColors.primaryMaroon
-                                            : Colors.grey.shade400,
+                                            ? AppColors.primary
+                                            : AppColors.border,
                                         width: 1.5,
                                       ),
                                     ),
@@ -227,7 +250,7 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
                                             : AppColors.textDark,
                                         fontWeight: isSelected
                                             ? FontWeight.bold
-                                            : FontWeight.normal,
+                                            : FontWeight.w600,
                                         fontSize: 13,
                                       ),
                                     ),
@@ -239,29 +262,29 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: AppSizes.xl),
 
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    text: 'Back',
-                    isPrimary: false,
-                    onPressed: () => Navigator.pop(context),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Back',
+                      isPrimary: false,
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: CustomButton(
-                    text: 'Next',
-                    isPrimary: true,
-                    onPressed: _onNextPressed,
+                  const SizedBox(width: AppSizes.lg),
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Next',
+                      isPrimary: true,
+                      onPressed: _onNextPressed,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

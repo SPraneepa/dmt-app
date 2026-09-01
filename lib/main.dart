@@ -29,6 +29,7 @@ class DMTApp extends StatelessWidget {
     return MaterialApp(
       title: 'DMT Mobile',
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.system,
       theme: AppTheme.lightTheme,
       home: const SplashScreen(),
     );

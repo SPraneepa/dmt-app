@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/constants/app_color.dart';
+import '../core/constants/app_sizes.dart';
 import '../providers/appointment_provider.dart';
 import '../widgets/custom_button.dart';
 import 'date_time_selection_screen.dart';
@@ -99,9 +100,13 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
+        borderSide: BorderSide(
+          color: Theme.of(context).primaryColor,
+          width: 1.5,
+        ),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      isDense: true,
     );
   }
 
@@ -117,7 +122,7 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(AppSizes.md),
           child: Form(
             key: _formKey,
             child: Column(
@@ -139,10 +144,10 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                         Text(
                           'Select the service category, specific service, and your preferred district office. Availability varies by location.',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.grey.shade700,
+                            color: const Color(0xFF4A4A4A),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        const SizedBox(height: 16),
 
                         Container(
                           padding: const EdgeInsets.all(16),
@@ -163,16 +168,25 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                               ),
                               const SizedBox(height: 8),
                               DropdownButtonFormField<String>(
-                                value: _selectedCategory,
-                                hint: const Text('Select Category'),
+                                initialValue: _selectedCategory,
+                                hint: const Text(
+                                  'Select Category',
+                                  style: TextStyle(fontSize: 14),
+                                ),
                                 isExpanded: true,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
                                 decoration: _dropdownDecoration(),
                                 items: _serviceMap.keys.map((category) {
                                   return DropdownMenuItem(
                                     value: category,
                                     child: Text(
                                       category,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 14),
                                     ),
                                   );
                                 }).toList(),
@@ -198,13 +212,18 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                               ),
                               const SizedBox(height: 8),
                               DropdownButtonFormField<String>(
-                                value: _selectedSubService,
+                                initialValue: _selectedSubService,
                                 hint: Text(
                                   _selectedCategory == null
                                       ? 'Select category first'
                                       : 'Select Specific Service',
+                                  style: const TextStyle(fontSize: 14),
                                 ),
                                 isExpanded: true,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
                                 decoration: _dropdownDecoration(),
                                 items: _selectedCategory == null
                                     ? []
@@ -215,7 +234,11 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                                           value: subService,
                                           child: Text(
                                             subService,
+                                            maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                            ),
                                           ),
                                         );
                                       }).toList(),
@@ -239,9 +262,16 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                               ),
                               const SizedBox(height: 8),
                               DropdownButtonFormField<String>(
-                                value: _selectedDistrict,
-                                hint: const Text('Select District'),
+                                initialValue: _selectedDistrict,
+                                hint: const Text(
+                                  'Select District',
+                                  style: TextStyle(fontSize: 14),
+                                ),
                                 isExpanded: true,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
                                 menuMaxHeight: 200,
                                 decoration: _dropdownDecoration(),
                                 items: _districts.map((district) {
@@ -249,7 +279,9 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
                                     value: district,
                                     child: Text(
                                       district,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 14),
                                     ),
                                   );
                                 }).toList(),

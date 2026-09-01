@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../core/constants/app_color.dart';
+import '../core/constants/app_sizes.dart';
+import '../core/constants/app_text_styles.dart';
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -10,12 +12,12 @@ class CustomButton extends StatelessWidget {
     this.isLoading = false,
     this.isPrimary = true,
     this.width,
-    this.height = 52,
-    this.borderRadius = 12,
+    this.height = AppSizes.buttonHeight,
+    this.borderRadius = AppSizes.radiusMedium,
   });
 
-  final VoidCallback? onPressed;
   final String text;
+  final VoidCallback? onPressed;
   final bool isLoading;
   final bool isPrimary;
   final double? width;
@@ -25,49 +27,51 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool enabled = !isLoading && onPressed != null;
-    final Color backgroundColor = isPrimary
-        ? AppColors.primaryMaroon
-        : Colors.white;
-    final Color foregroundColor = isPrimary
-        ? Colors.white
-        : AppColors.primaryMaroon;
-    final Color borderColor = isPrimary
-        ? AppColors.primaryMaroon
-        : AppColors.primaryMaroon;
 
-    final double buttonHeight = height.clamp(50, 54).toDouble();
+    final Color backgroundColor = isPrimary
+        ? AppColors.primary
+        : AppColors.surface;
+
+    final Color foregroundColor = isPrimary
+        ? AppColors.textLight
+        : AppColors.primary;
+
+    final Color borderColor = AppColors.primary;
 
     return SizedBox(
       width: width ?? double.infinity,
-      height: buttonHeight,
+      height: height,
       child: isPrimary
           ? ElevatedButton(
               onPressed: enabled ? onPressed : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: backgroundColor,
                 foregroundColor: foregroundColor,
-                disabledBackgroundColor: AppColors.cardBorder,
-                disabledForegroundColor: Colors.white,
+                disabledBackgroundColor: AppColors.disabled,
+                disabledForegroundColor: AppColors.textLight,
                 elevation: 0,
-                minimumSize: Size(width ?? double.infinity, buttonHeight),
+                padding: EdgeInsets.zero,
+                minimumSize: Size(width ?? double.infinity, height),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
               ),
               child: isLoading
                   ? const SizedBox(
-                      width: 18,
-                      height: 18,
+                      width: AppSizes.iconMedium,
+                      height: AppSizes.iconMedium,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.textLight,
+                        ),
                       ),
                     )
-                  : Text(
-                      text,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                  : Center(
+                      child: Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.button,
                       ),
                     ),
             )
@@ -76,30 +80,33 @@ class CustomButton extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: foregroundColor,
                 backgroundColor: backgroundColor,
-                side: BorderSide(color: borderColor, width: 1.2),
-                disabledForegroundColor: AppColors.cardBorder,
-                disabledBackgroundColor: Colors.white,
-                minimumSize: Size(width ?? double.infinity, buttonHeight),
+                side: BorderSide(color: borderColor, width: 1.5),
+                disabledForegroundColor: AppColors.disabled,
+                disabledBackgroundColor: AppColors.surface,
+                padding: EdgeInsets.zero,
+                minimumSize: Size(width ?? double.infinity, height),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
               ),
               child: isLoading
                   ? const SizedBox(
-                      width: 18,
-                      height: 18,
+                      width: AppSizes.iconMedium,
+                      height: AppSizes.iconMedium,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primaryMaroon,
+                          AppColors.primary,
                         ),
                       ),
                     )
-                  : Text(
-                      text,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                  : Center(
+                      child: Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.button.copyWith(
+                          color: foregroundColor,
+                        ),
                       ),
                     ),
             ),

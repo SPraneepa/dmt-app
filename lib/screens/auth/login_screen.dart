@@ -3,11 +3,12 @@ import 'package:provider/provider.dart';
 
 import '../../core/constants/app_color.dart';
 import '../../core/constants/app_sizes.dart';
+import '../../core/constants/app_text_styles.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/labeled_text_field.dart';
-import 'signup_screen.dart';
 import '../home_screen.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success && mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -48,8 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -63,12 +62,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: AppSizes.lg),
-                    Text('Log In', style: theme.textTheme.headlineSmall),
+                    const Text('Log In', style: AppTextStyles.heading),
                     const SizedBox(height: AppSizes.xs),
-                    Text(
+                    const Text(
                       'Hi! Welcome to DMT Appointment booking app',
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium,
+                      style: AppTextStyles.bodySecondary,
                     ),
                     const SizedBox(height: AppSizes.xxl),
 
@@ -124,8 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {},
                         child: Text(
                           'Forgot Password?',
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: AppColors.primaryMaroon,
+                          style: AppTextStyles.label.copyWith(
+                            color: AppColors.primary,
                           ),
                         ),
                       ),
@@ -133,25 +132,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: AppSizes.md),
 
                     CustomButton(
-                      width: double.infinity,
-                      height: 52,
                       text: 'Log In',
                       isLoading: _isLoading,
-                      borderRadius: 30,
                       onPressed: _handleLogin,
                     ),
                     const SizedBox(height: AppSizes.xl),
 
-                    Row(
+                    const Row(
                       children: [
                         Expanded(child: Divider(color: AppColors.divider)),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: AppSizes.xs,
                           ),
                           child: Text(
                             'or sign up with',
-                            style: theme.textTheme.bodySmall,
+                            style: AppTextStyles.caption,
                           ),
                         ),
                         Expanded(child: Divider(color: AppColors.divider)),
@@ -165,22 +161,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {},
                         icon: Image.asset(
                           'assets/images/google_logo.png',
-                          height: 18,
-                          width: 18,
+                          height: AppSizes.iconSmall,
+                          width: AppSizes.iconSmall,
                           errorBuilder: (context, error, stackTrace) =>
-                              const Icon(Icons.g_mobiledata, size: 18),
+                              const Icon(
+                                Icons.g_mobiledata,
+                                size: AppSizes.iconMedium,
+                              ),
                         ),
                         label: const Text('Continue with Google'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.textPrimary,
-                          side: BorderSide(color: Colors.grey[300]!),
+                          side: const BorderSide(color: AppColors.border),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMedium,
+                            ),
                           ),
                         ),
                       ),
@@ -190,9 +186,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           "Don't have an account? ",
-                          style: theme.textTheme.bodyMedium,
+                          style: AppTextStyles.bodySecondary,
                         ),
                         GestureDetector(
                           onTap: () {
@@ -205,8 +201,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             'Sign Up',
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: AppColors.primaryMaroon,
+                            style: AppTextStyles.label.copyWith(
+                              color: AppColors.primary,
                             ),
                           ),
                         ),

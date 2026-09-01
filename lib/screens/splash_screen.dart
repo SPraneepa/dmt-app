@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../core/constants/app_color.dart';
-import 'applicant_details_screen.dart';
 import 'auth/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,19 +12,28 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? _navigationTimer;
+
   @override
   void initState() {
     super.initState();
     _navigateToNext();
   }
 
-  void _navigateToNext() async {
-    await Future.delayed(const Duration(seconds: 3));
-    if (!mounted) return;
+  @override
+  void dispose() {
+    _navigationTimer?.cancel();
+    super.dispose();
+  }
 
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+  void _navigateToNext() {
+    _navigationTimer = Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+
+      Navigator.of(
+        context,
+      ).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+    });
   }
 
   @override

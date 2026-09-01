@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 import '../core/constants/app_color.dart';
+import '../core/constants/app_sizes.dart';
 import '../providers/appointment_provider.dart';
 import '../widgets/custom_button.dart';
 import 'service_selection_screen.dart';
@@ -17,6 +19,7 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nicController = TextEditingController();
   final _nameController = TextEditingController();
+  final _birthDateController = TextEditingController();
   final _phoneController = TextEditingController();
 
   bool _isPhoneVerified = false;
@@ -25,6 +28,7 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
   void dispose() {
     _nicController.dispose();
     _nameController.dispose();
+    _birthDateController.dispose();
     _phoneController.dispose();
     super.dispose();
   }
@@ -35,66 +39,89 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          left: 20,
-          right: 20,
-          top: 20,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSizes.radiusLg),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Verify Phone Number',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryMaroon,
+      ),
+      builder: (context) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + AppSizes.md,
+            left: AppSizes.lg,
+            right: AppSizes.lg,
+            top: AppSizes.md,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Verify Phone Number',
+                style: TextStyle(
+                  fontSize: AppSizes.textSubtitle,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryMaroon,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text('Enter the 4-digit code sent to ${_phoneController.text}'),
-            const SizedBox(height: 16),
-            TextField(
-              controller: otpController,
-              keyboardType: TextInputType.number,
-              maxLength: 4,
-              decoration: const InputDecoration(
-                labelText: 'OTP Code (Enter 1234)',
-                border: OutlineInputBorder(),
+              const SizedBox(height: AppSizes.xs),
+              Text(
+                'Enter the 4-digit code sent to ${_phoneController.text}',
+                style: const TextStyle(
+                  fontSize: AppSizes.textBody,
+                  color: AppColors.textSecondary,
+                  height: 1.4,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: 'Verify',
-              width: double.infinity,
-              height: 48,
-              onPressed: () {
-                if (otpController.text == '1234') {
-                  setState(() {
-                    _isPhoneVerified = true;
-                  });
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Phone number verified successfully!'),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Invalid OTP. Use 1234 for demo.'),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+              const SizedBox(height: AppSizes.md),
+              TextField(
+                controller: otpController,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: AppSizes.textBody,
+                  fontWeight: FontWeight.w600,
+                ),
+                decoration: const InputDecoration(
+                  labelText: 'OTP Code (Enter 1234)',
+                  labelStyle: TextStyle(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: AppColors.inputFill,
+                ),
+              ),
+              const SizedBox(height: AppSizes.md),
+              CustomButton(
+                text: 'Verify',
+                width: double.infinity,
+                height: AppSizes.buttonHeight,
+                onPressed: () {
+                  if (otpController.text == '1234') {
+                    setState(() {
+                      _isPhoneVerified = true;
+                    });
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Phone number verified successfully!'),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Invalid OTP. Use 1234 for demo.'),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -124,166 +151,260 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
     }
   }
 
+  Widget _buildFieldLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSizes.xxs),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: AppSizes.textBody,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+      ),
+    );
+  }
+
+  InputDecoration _buildInputDecoration(String hintText, {Widget? suffixIcon}) {
+    return InputDecoration(
+      hintText: hintText,
+      hintStyle: const TextStyle(
+        color: AppColors.textHint,
+        fontSize: AppSizes.textBody,
+      ),
+      filled: true,
+      fillColor: AppColors.inputFill,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: AppSizes.md,
+        vertical: AppSizes.sm,
+      ),
+      suffixIcon: suffixIcon,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        borderSide: const BorderSide(color: AppColors.inputBorder, width: 1.2),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        borderSide: const BorderSide(
+          color: AppColors.primaryMaroon,
+          width: 1.6,
+        ),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        borderSide: const BorderSide(color: Colors.red, width: 1.2),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+        borderSide: const BorderSide(color: Colors.red, width: 1.6),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Department of Motor Traffic'),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 24,
+              height: 8,
+              decoration: BoxDecoration(
+                color: AppColors.primaryMaroon,
+                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+              ),
+            ),
+            const SizedBox(width: AppSizes.xxs),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: AppColors.divider,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: AppSizes.xxs),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: AppColors.divider,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: AppSizes.xxs),
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: AppColors.divider,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.lg,
+          vertical: AppSizes.sm,
+        ),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Applicant Details',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              const Text(
+                'Enter applicant personal information',
+                style: TextStyle(
+                  fontSize: AppSizes.textSubtitle,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: AppColors.textPrimary,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSizes.lg),
 
-              // Personal Details Card
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.cardBorder),
+              // Full Name
+              _buildFieldLabel('Full Name'),
+              TextFormField(
+                controller: _nameController,
+                keyboardType: TextInputType.name,
+                style: const TextStyle(
+                  fontSize: AppSizes.textBody,
+                  color: AppColors.textPrimary,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Personal Details',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _nicController,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9vVxX]')),
-                        LengthLimitingTextInputFormatter(12),
-                      ],
-                      decoration: const InputDecoration(
-                        labelText: 'NIC Number',
-                        hintText: '123456789V or 199012345678',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return 'Enter NIC number';
-                        }
-                        final nic = v.trim();
-                        final nicRegex = RegExp(
-                          r'^([0-9]{9}[vVxX]|[0-9]{12})$',
-                        );
-                        if (!nicRegex.hasMatch(nic)) {
-                          return 'Enter valid NIC (e.g. 123456789V or 199012345678)';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _nameController,
-                      keyboardType: TextInputType.name,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[a-zA-Z\s\.]'),
-                        ),
-                      ],
-                      decoration: const InputDecoration(
-                        labelText: 'Full Name (as on NIC)',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Enter full name'
-                          : null,
-                    ),
-                  ],
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s\.]')),
+                ],
+                decoration: _buildInputDecoration(
+                  'Rajapaksha Pathirage Kamal Perera',
+                ),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Enter full name' : null,
+              ),
+              const SizedBox(height: AppSizes.md),
+
+              // National Identification Card (NIC)
+              _buildFieldLabel('National Identification Card (NIC)'),
+              TextFormField(
+                controller: _nicController,
+                style: const TextStyle(
+                  fontSize: AppSizes.textBody,
+                  color: AppColors.textPrimary,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9vVxX]')),
+                  LengthLimitingTextInputFormatter(12),
+                ],
+                decoration: _buildInputDecoration('98XXXXXXXXV/ 200XXXXXXXXX'),
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Enter NIC number';
+                  final nic = v.trim();
+                  final nicRegex = RegExp(r'^([0-9]{9}[vVxX]|[0-9]{12})$');
+                  if (!nicRegex.hasMatch(nic)) {
+                    return 'Enter valid NIC';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: AppSizes.md),
+
+              // Birth Date
+              _buildFieldLabel('Birth Date'),
+              TextFormField(
+                controller: _birthDateController,
+                readOnly: true,
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime(2000),
+                    firstDate: DateTime(1930),
+                    lastDate: DateTime.now(),
+                  );
+                  if (pickedDate != null) {
+                    setState(() {
+                      _birthDateController.text =
+                          "${pickedDate.year}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.day.toString().padLeft(2, '0')}";
+                    });
+                  }
+                },
+                style: const TextStyle(
+                  fontSize: AppSizes.textBody,
+                  color: AppColors.textPrimary,
+                ),
+                decoration: _buildInputDecoration(
+                  'YYYY/MM/DD',
+                  suffixIcon: const Icon(
+                    Icons.calendar_today_outlined,
+                    color: AppColors.textSecondary,
+                    size: 20,
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSizes.md),
 
-              // Contact & Verification Card
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.cardBorder),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Contact & Verification',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
+              // Phone Number & OTP Section
+              _buildFieldLabel('Phone Number'),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: TextFormField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      style: const TextStyle(
+                        fontSize: AppSizes.textBody,
+                        color: AppColors.textPrimary,
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
                         LengthLimitingTextInputFormatter(10),
                       ],
-                      decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        hintText: '07X XXXXXXX',
-                        border: OutlineInputBorder(),
-                      ),
+                      decoration: _buildInputDecoration('07X XXXXXXX'),
                       validator: (v) {
-                        if (v == null || v.isEmpty) {
-                          return 'Enter phone number';
-                        }
+                        if (v == null || v.isEmpty) return 'Enter phone number';
                         final phoneRegex = RegExp(r'^07[0-9]{8}$');
-                        if (!phoneRegex.hasMatch(v)) {
-                          return 'Phone number must start with 07 and have 10 digits';
-                        }
+                        if (!phoneRegex.hasMatch(v)) return 'Invalid phone';
                         return null;
                       },
                     ),
-                    const SizedBox(height: 12),
-                    _isPhoneVerified
-                        ? Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade50,
-                              borderRadius: BorderRadius.circular(8),
+                  ),
+                  const SizedBox(width: AppSizes.sm),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: _isPhoneVerified
+                        ? const Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppSizes.sm,
                             ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            child: Row(
                               children: [
-                                Icon(Icons.check_circle, color: Colors.green),
-                                SizedBox(width: 8),
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 4),
                                 Text(
-                                  'Phone Verified',
+                                  'VERIFIED',
                                   style: TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: AppSizes.textCaption,
                                   ),
                                 ),
                               ],
                             ),
                           )
-                        : CustomButton(
-                            text: 'Send OTP Code',
-                            isPrimary: false,
-                            width: double.infinity,
-                            height: 48,
+                        : TextButton(
                             onPressed: () {
                               final phoneRegex = RegExp(r'^07[0-9]{8}$');
                               if (phoneRegex.hasMatch(_phoneController.text)) {
@@ -292,24 +413,72 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Enter a valid 10-digit phone number starting with 07.',
+                                      'Enter a valid 10-digit number starting with 07.',
                                     ),
                                   ),
                                 );
                               }
                             },
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSizes.sm,
+                                vertical: AppSizes.sm,
+                              ),
+                            ),
+                            child: const Text(
+                              'SEND OTP',
+                              style: TextStyle(
+                                color: AppColors.primaryMaroon,
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppSizes.textCaption,
+                              ),
+                            ),
                           ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: AppSizes.xl),
 
-              // Next Button
-              CustomButton(
-                text: 'Next',
-                width: double.infinity,
-                height: 50,
-                onPressed: _onNextPressed,
+              // Action Buttons Row (BACK & NEXT)
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: AppSizes.buttonHeight,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                            color: AppColors.primaryMaroon,
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMd,
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'BACK',
+                          style: TextStyle(
+                            color: AppColors.primaryMaroon,
+                            fontWeight: FontWeight.bold,
+                            fontSize: AppSizes.textBody,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSizes.md),
+                  Expanded(
+                    child: CustomButton(
+                      text: 'NEXT',
+                      width: double.infinity,
+                      height: AppSizes.buttonHeight,
+                      onPressed: _onNextPressed,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

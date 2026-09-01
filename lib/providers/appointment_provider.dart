@@ -48,12 +48,17 @@ class AppointmentProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    availableSlots = await _repository.fetchAvailableSlots(
-      selectedDistrict,
-      date,
-    );
-    isLoading = false;
-    notifyListeners();
+    try {
+      availableSlots = await _repository.fetchAvailableSlots(
+        selectedDistrict,
+        date,
+      );
+    } catch (e) {
+      availableSlots = [];
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   void selectSlot(String slot) {
@@ -65,6 +70,14 @@ class AppointmentProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
+    final int nextSequence = myBookings.length + 1;
+    final String generatedCounterNumber = nextSequence.toString().padLeft(
+      2,
+      '0',
+    );
+    final String generatedTokenNumber =
+        'T-${nextSequence.toString().padLeft(3, '0')}';
+
     final appointment = AppointmentModel(
       nic: nic,
       fullName: fullName,
@@ -73,15 +86,42 @@ class AppointmentProvider extends ChangeNotifier {
       district: selectedDistrict,
       date: selectedDate,
       timeSlot: selectedTimeSlot,
+      counterNumber: generatedCounterNumber,
+      tokenNumber: generatedTokenNumber,
     );
 
-    final success = await _repository.confirmBooking(appointment);
-    if (success) {
-      myBookings.add(appointment);
+    bool success = false;
+    try {
+      success = await _repository.confirmBooking(appointment);
+      if (success) {
+        myBookings.add(appointment);
+        resetSelection(); // Call class-level reset method on success
+      }
+    } catch (e) {
+      success = false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
 
-    isLoading = false;
-    notifyListeners();
     return success;
+  }
+
+  /// Class-level method to reset active booking selections
+  void resetSelection() {
+    selectedService = '';
+    selectedDistrict = '';
+    selectedDate = '';
+    selectedTimeSlot = '';
+    availableSlots = [];
+    notifyListeners();
+  }
+
+  /// Class-level method to completely reset user details and flow
+  void clearAll() {
+    nic = '';
+    fullName = '';
+    phoneNumber = '';
+    resetSelection();
   }
 }

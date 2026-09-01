@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../core/constants/app_sizes.dart';
+import '../core/constants/app_text_styles.dart';
 
 class LabeledTextField extends StatelessWidget {
   const LabeledTextField({
@@ -8,8 +12,12 @@ class LabeledTextField extends StatelessWidget {
     this.hintText,
     this.keyboardType,
     this.obscureText = false,
+    this.readOnly = false,
+    this.enabled = true,
+    this.onTap,
     this.validator,
     this.suffixIcon,
+    this.inputFormatters,
   });
 
   final String label;
@@ -17,28 +25,29 @@ class LabeledTextField extends StatelessWidget {
   final String? hintText;
   final TextInputType? keyboardType;
   final bool obscureText;
+  final bool readOnly;
+  final bool enabled;
+  final VoidCallback? onTap;
   final String? Function(String?)? validator;
   final Widget? suffixIcon;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          textAlign: TextAlign.left,
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
+        Text(label, style: AppTextStyles.label),
+        const SizedBox(height: AppSizes.sm),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           obscureText: obscureText,
+          readOnly: readOnly,
+          enabled: enabled,
+          onTap: onTap,
+          inputFormatters: inputFormatters,
+          style: AppTextStyles.body,
           decoration: InputDecoration(
             hintText: hintText,
             suffixIcon: suffixIcon,
