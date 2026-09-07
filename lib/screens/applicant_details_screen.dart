@@ -321,10 +321,38 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
               TextFormField(
                 controller: _birthDateController,
                 readOnly: true,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Select birth date'
+                    : null,
                 onTap: () async {
+                  final nic = _nicController.text.trim();
+                  final nicRegex = RegExp(r'^([0-9]{9}[vVxX]|[0-9]{12})$');
+
+                  if (nic.isEmpty || !nicRegex.hasMatch(nic)) {
+                    return;
+                  }
+
+                  int initialYear = 2000;
+                  if (nic.length == 10) {
+                    final yearDigits = int.tryParse(nic.substring(0, 2));
+                    if (yearDigits != null) {
+                      initialYear = 1900 + yearDigits;
+                    }
+                  } else if (nic.length == 12) {
+                    final yearDigits = int.tryParse(nic.substring(0, 4));
+                    if (yearDigits != null) {
+                      initialYear = yearDigits;
+                    }
+                  }
+
+                  DateTime defaultDate = DateTime(initialYear, 1, 1);
+                  if (defaultDate.isAfter(DateTime.now())) {
+                    defaultDate = DateTime.now();
+                  }
+
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
-                    initialDate: DateTime(2000),
+                    initialDate: defaultDate,
                     firstDate: DateTime(1930),
                     lastDate: DateTime.now(),
                   );
@@ -406,17 +434,8 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
                           )
                         : TextButton(
                             onPressed: () {
-                              final phoneRegex = RegExp(r'^07[0-9]{8}$');
-                              if (phoneRegex.hasMatch(_phoneController.text)) {
+                              if (_formKey.currentState!.validate()) {
                                 _showOtpModal();
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Enter a valid 10-digit number starting with 07.',
-                                    ),
-                                  ),
-                                );
                               }
                             },
                             style: TextButton.styleFrom(
