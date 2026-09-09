@@ -14,6 +14,7 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.height = AppSizes.buttonHeight,
     this.borderRadius = AppSizes.radiusMedium,
+    this.icon,
   });
 
   final String text;
@@ -23,6 +24,7 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final double height;
   final double borderRadius;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,43 @@ class CustomButton extends StatelessWidget {
         : AppColors.primary;
 
     final Color borderColor = AppColors.primary;
+
+    Widget buildButtonContent(Color textAndIconColor) {
+      if (isLoading) {
+        return SizedBox(
+          width: AppSizes.iconMedium,
+          height: AppSizes.iconMedium,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(textAndIconColor),
+          ),
+        );
+      }
+
+      if (icon != null) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: AppSizes.iconMedium, color: textAndIconColor),
+            const SizedBox(width: AppSizes.xs),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.button.copyWith(color: textAndIconColor),
+            ),
+          ],
+        );
+      }
+
+      return Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: AppTextStyles.button.copyWith(color: textAndIconColor),
+        ),
+      );
+    }
 
     return SizedBox(
       width: width ?? double.infinity,
@@ -56,24 +95,7 @@ class CustomButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
               ),
-              child: isLoading
-                  ? const SizedBox(
-                      width: AppSizes.iconMedium,
-                      height: AppSizes.iconMedium,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.textLight,
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Text(
-                        text,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.button,
-                      ),
-                    ),
+              child: buildButtonContent(foregroundColor),
             )
           : OutlinedButton(
               onPressed: enabled ? onPressed : null,
@@ -89,26 +111,7 @@ class CustomButton extends StatelessWidget {
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),
               ),
-              child: isLoading
-                  ? const SizedBox(
-                      width: AppSizes.iconMedium,
-                      height: AppSizes.iconMedium,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primary,
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Text(
-                        text,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.button.copyWith(
-                          color: foregroundColor,
-                        ),
-                      ),
-                    ),
+              child: buildButtonContent(foregroundColor),
             ),
     );
   }
