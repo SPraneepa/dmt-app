@@ -141,6 +141,7 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
       context.read<AppointmentProvider>().updateApplicantDetails(
         nic: _nicController.text.trim(),
         fullName: _nameController.text.trim(),
+        dob: _birthDateController.text.trim(),
         phone: _phoneController.text.trim(),
       );
 

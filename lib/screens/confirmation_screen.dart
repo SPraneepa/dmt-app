@@ -33,11 +33,13 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     if (!mounted) return;
 
     if (success) {
-      // Simulate sending SMS notification
+      final formattedDate = provider.selectedDate
+          .replaceAll(' ', '')
+          .replaceAll('-', '/');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'SMS Sent: Appointment confirmed for ${provider.selectedDate} at ${provider.selectedTimeSlot}',
+            'SMS Sent: Appointment confirmed for $formattedDate at ${provider.selectedTimeSlot}',
           ),
           backgroundColor: Colors.green.shade800,
           duration: const Duration(seconds: 4),
@@ -47,8 +49,7 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const SuccessScreen()),
-        (route) =>
-            false, // Clear stack so user can't navigate back into the booking flow
+        (route) => false,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -62,45 +63,98 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppointmentProvider>();
-    final theme = Theme.of(context);
+
+    // Format dates to YYYY/MM/DD and remove all whitespace
+    final formattedAppointmentDate = provider.selectedDate.isNotEmpty
+        ? provider.selectedDate.replaceAll(' ', '').replaceAll('-', '/')
+        : '--';
+
+    final formattedDob = provider.dob.isNotEmpty
+        ? provider.dob.replaceAll(' ', '').replaceAll('-', '/')
+        : '--';
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Department of Motor Traffic - Sri Lanka'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         centerTitle: true,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: AppSizes.indicatorDotSize,
+              height: AppSizes.indicatorDotSize,
+              decoration: const BoxDecoration(
+                color: AppColors.divider,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: AppSizes.xxs),
+            Container(
+              width: AppSizes.indicatorDotSize,
+              height: AppSizes.indicatorDotSize,
+              decoration: const BoxDecoration(
+                color: AppColors.divider,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: AppSizes.xxs),
+            Container(
+              width: AppSizes.indicatorDotSize,
+              height: AppSizes.indicatorDotSize,
+              decoration: const BoxDecoration(
+                color: AppColors.divider,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: AppSizes.xxs),
+            Container(
+              width: AppSizes.indicatorActiveWidth,
+              height: AppSizes.indicatorDotSize,
+              decoration: BoxDecoration(
+                color: AppColors.primaryMaroon,
+                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.lg,
+          vertical: AppSizes.sm,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'View Information and Confirm Appointment',
-              style: theme.textTheme.titleLarge?.copyWith(
+            const Text(
+              'View information & confirm booking',
+              style: TextStyle(
+                fontSize: AppSizes.textSubtitle,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
-                fontSize: 22,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Check the details below before confirming. Once booked, you\'ll receive an SMS confirmation.',
-              style: theme.textTheme.bodyMedium?.copyWith(
+            const SizedBox(height: AppSizes.xs),
+            const Text(
+              'Check the details below before confirming. Once booked, you\'ll receive a SMS confirmation.',
+              style: TextStyle(
                 color: AppColors.textSecondary,
-                fontSize: 14,
-                height: 1.5,
+                fontSize: AppSizes.textCaption,
+                height: 1.4,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSizes.lg),
 
+            // APPLICANT CARD
             Container(
               padding: const EdgeInsets.all(AppSizes.lg),
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
-                border: Border.all(color: AppColors.border, width: 1.2),
+                border: Border.all(color: AppColors.inputBorder, width: 1.2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,149 +162,165 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
                   const Text(
                     'APPLICANT',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: AppSizes.textCaption,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.textSecondary,
+                      color: AppColors.textHint,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: AppSizes.sm),
-                  _buildDetailRow('NIC', provider.nic),
-                  _buildDetailRow('Name', provider.fullName),
-                  _buildDetailRow('Phone Number', provider.phoneNumber),
-                  const Divider(height: 16),
-
-                  const Text(
-                    'APPOINTMENT',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textSecondary,
-                    ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.person_outline,
+                    value: provider.fullName.isNotEmpty
+                        ? provider.fullName
+                        : '--',
                   ),
-                  const SizedBox(height: AppSizes.sm),
-                  _buildDetailRow('Service', provider.selectedService),
-                  _buildDetailRow('Office', provider.selectedDistrict),
-                  const SizedBox(height: AppSizes.lg),
-
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryDark,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'YOUR SLOT',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Date',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 13,
-                              ),
-                            ),
-                            Text(
-                              provider.selectedDate,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Time',
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 13,
-                              ),
-                            ),
-                            Text(
-                              provider.selectedTimeSlot,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'DMT-SL-REF-2026',
-                          style: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 10,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.badge_outlined,
+                    value: provider.nic.isNotEmpty ? provider.nic : '--',
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.phone_outlined,
+                    value: provider.phoneNumber.isNotEmpty
+                        ? provider.phoneNumber
+                        : '--',
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.cake_outlined,
+                    value: formattedDob,
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
 
+            const SizedBox(height: AppSizes.md),
+
+            // APPOINTMENT CARD
+            Container(
+              padding: const EdgeInsets.all(AppSizes.lg),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSizes.radiusMedium),
+                border: Border.all(color: AppColors.inputBorder, width: 1.2),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'APPOINTMENT',
+                    style: TextStyle(
+                      fontSize: AppSizes.textCaption,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textHint,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.directions_car_outlined,
+                    value: provider.selectedService.isNotEmpty
+                        ? provider.selectedService
+                        : '--',
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.apartment_outlined,
+                    value: provider.selectedDistrict.isNotEmpty
+                        ? provider.selectedDistrict
+                        : '--',
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.calendar_today_outlined,
+                    value: formattedAppointmentDate,
+                  ),
+                  const SizedBox(height: AppSizes.md),
+                  _buildIconDetailRow(
+                    icon: Icons.wb_sunny_outlined,
+                    value: provider.selectedTimeSlot.isNotEmpty
+                        ? provider.selectedTimeSlot
+                        : '--',
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: AppSizes.lg),
+
+            // TERMS CHECKBOX ROW
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 24,
-                  width: 24,
+                  height: AppSizes.iconLarge,
+                  width: AppSizes.iconLarge,
                   child: Checkbox(
                     value: _agreedToTerms,
-                    activeColor: AppColors.primary,
+                    activeColor: AppColors.primaryMaroon,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        AppSizes.radiusSm / 2,
+                      ),
+                    ),
                     onChanged: (v) =>
                         setState(() => _agreedToTerms = v ?? false),
                   ),
                 ),
                 const SizedBox(width: AppSizes.sm),
-                Expanded(
+                const Expanded(
                   child: Text(
-                    'I confirm the above details are correct and I agree to the DMT booking terms. I understand that no-shows may result in a temporary ban.',
+                    'I confirm the above details are correct and I agree to the DMT booking terms. I understand that no-shows may result in a temporary ban from online booking.',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textPrimary,
-                      height: 1.5,
+                      fontSize: AppSizes.textCaption,
+                      color: AppColors.textSecondary,
+                      height: 1.4,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
 
+            const SizedBox(height: AppSizes.xl),
+
+            // ACTION BUTTONS
             Row(
               children: [
                 Expanded(
-                  child: CustomButton(
-                    text: 'Back',
-                    isPrimary: false,
-                    onPressed: () => Navigator.pop(context),
+                  child: SizedBox(
+                    height: AppSizes.buttonHeight,
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 1.5,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusMd,
+                          ),
+                        ),
+                      ),
+                      child: const Text(
+                        'BACK',
+                        style: TextStyle(
+                          color: AppColors.primaryMaroon,
+                          fontWeight: FontWeight.bold,
+                          fontSize: AppSizes.textBody,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(width: AppSizes.lg),
+                const SizedBox(width: AppSizes.md),
                 Expanded(
                   child: CustomButton(
-                    text: 'Confirm Booking',
-                    isPrimary: true,
+                    text: 'CONFIRM BOOKING',
+                    width: double.infinity,
+                    height: AppSizes.buttonHeight,
                     isLoading: provider.isLoading,
                     onPressed: _onConfirmPressed,
                   ),
@@ -263,30 +333,23 @@ class _ConfirmationScreenState extends State<ConfirmationScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(color: Color(0xFF333333), fontSize: 13),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: const TextStyle(
-                color: Color(0xFF111111),
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-              overflow: TextOverflow.ellipsis,
+  Widget _buildIconDetailRow({required IconData icon, required String value}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Icon(icon, size: AppSizes.iconMedium, color: AppColors.textHint),
+        const SizedBox(width: AppSizes.md),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: AppSizes.textBody,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

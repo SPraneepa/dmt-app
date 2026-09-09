@@ -10,6 +10,7 @@ class AppointmentProvider extends ChangeNotifier {
   // Flow Data
   String nic = '';
   String fullName = '';
+  String dob = '';
   String phoneNumber = '';
   String selectedService = '';
   String selectedDistrict = '';
@@ -26,10 +27,12 @@ class AppointmentProvider extends ChangeNotifier {
   void updateApplicantDetails({
     required String nic,
     required String fullName,
+    required String dob,
     required String phone,
   }) {
     this.nic = nic;
     this.fullName = fullName;
+    this.dob = dob;
     this.phoneNumber = phone;
     notifyListeners();
   }
@@ -81,6 +84,7 @@ class AppointmentProvider extends ChangeNotifier {
     final appointment = AppointmentModel(
       nic: nic,
       fullName: fullName,
+      dob: dob,
       phoneNumber: phoneNumber,
       service: selectedService,
       district: selectedDistrict,
@@ -121,6 +125,7 @@ class AppointmentProvider extends ChangeNotifier {
   void clearAll() {
     nic = '';
     fullName = '';
+    dob = '';
     phoneNumber = '';
     resetSelection();
   }

@@ -2,6 +2,7 @@ class AppointmentModel {
   final String? id;
   final String nic;
   final String fullName;
+  final String dob;
   final String phoneNumber;
   final String service;
   final String district;
@@ -14,6 +15,7 @@ class AppointmentModel {
     this.id,
     required this.nic,
     required this.fullName,
+    required this.dob,
     required this.phoneNumber,
     required this.service,
     required this.district,
@@ -25,6 +27,8 @@ class AppointmentModel {
 
   // Getters for HomeScreen compatibility
   String get userName => fullName;
+  String get userPhone => phoneNumber;
+  String get userDob => dob;
   String get nicNumber => nic;
   String get serviceName => service;
   String get location => district;
@@ -35,6 +39,7 @@ class AppointmentModel {
       'id': id,
       'nic': nic,
       'fullName': fullName,
+      'dob': dob,
       'phoneNumber': phoneNumber,
       'service': service,
       'district': district,
@@ -50,6 +55,7 @@ class AppointmentModel {
       id: json['id'],
       nic: json['nic'] ?? '',
       fullName: json['fullName'] ?? '',
+      dob: json['dob'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       service: json['service'] ?? '',
       district: json['district'] ?? '',
