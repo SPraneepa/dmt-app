@@ -202,6 +202,91 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
     );
   }
 
+  Widget _buildStepIndicator() {
+    final steps = [
+      {'title': 'Personal Info', 'icon': Icons.person_outline},
+      {'title': 'Service Selection', 'icon': null},
+      {'title': 'Date/Time', 'icon': null},
+      {'title': 'Confirmation', 'icon': null},
+    ];
+
+    const int currentStep = 0; // 0-indexed: Step 1 (Personal Info) is active
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(steps.length, (index) {
+          final isActive = index == currentStep;
+          final isCompleted = index < currentStep;
+
+          Color activeColor = AppColors.primaryMaroon;
+          Color inactiveColor = Colors.grey.shade400;
+
+          return Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 3,
+                        color: index == 0
+                            ? Colors.transparent
+                            : (index <= currentStep
+                                  ? activeColor
+                                  : inactiveColor),
+                      ),
+                    ),
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: isActive || isCompleted
+                            ? activeColor
+                            : inactiveColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          steps[index]['icon'] as IconData? ?? Icons.circle,
+                          size: steps[index]['icon'] != null ? 16 : 10,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 3,
+                        color: index == steps.length - 1
+                            ? Colors.transparent
+                            : (index < currentStep
+                                  ? activeColor
+                                  : inactiveColor),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  steps[index]['title'] as String,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppSizes.textCaption,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                    color: isActive ? activeColor : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -210,47 +295,8 @@ class _ApplicantDetailsScreenState extends State<ApplicantDetailsScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 24,
-              height: 8,
-              decoration: BoxDecoration(
-                color: AppColors.primaryMaroon,
-                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ],
-        ),
+        toolbarHeight: 70,
+        title: _buildStepIndicator(),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(

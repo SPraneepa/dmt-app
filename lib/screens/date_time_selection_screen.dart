@@ -17,10 +17,8 @@ class DateTimeSelectionScreen extends StatefulWidget {
 }
 
 class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
-  // Default selected date is the next day
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
 
-  // Track selected session: 'morning' or 'afternoon'
   String? _selectedSession;
   String? _selectedSlot;
 
