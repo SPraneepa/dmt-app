@@ -17,8 +17,10 @@ class DateTimeSelectionScreen extends StatefulWidget {
 }
 
 class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
+  // Default selected date is the next day
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
 
+  // Track selected session: 'morning' or 'afternoon'
   String? _selectedSession;
   String? _selectedSlot;
 
@@ -95,6 +97,113 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
         ),
+      ),
+    );
+  }
+
+  PreferredSizeWidget _buildHeaderAppBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      toolbarHeight: 80,
+      title: _buildStepIndicator(),
+    );
+  }
+
+  Widget _buildStepIndicator() {
+    final steps = [
+      {'title': 'Personal Info', 'icon': Icons.check},
+      {'title': 'Service Selecti...', 'icon': Icons.assignment_outlined},
+      {'title': 'Date/Time', 'icon': Icons.calendar_today_outlined},
+      {'title': 'Confirmation', 'icon': null},
+    ];
+
+    const int currentStep = 2; // Step 3 (0-indexed) highlighted
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(steps.length, (index) {
+          final isActive = index == currentStep;
+          final isCompleted = index < currentStep;
+
+          Color activeColor = AppColors.primaryMaroon;
+          Color inactiveColor = Colors.grey.shade400;
+
+          IconData? iconData = steps[index]['icon'] as IconData?;
+          if (isCompleted && index == 0) {
+            iconData = Icons.check;
+          }
+
+          return Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: index == 0
+                            ? Colors.transparent
+                            : (index <= currentStep
+                                  ? activeColor
+                                  : inactiveColor),
+                      ),
+                    ),
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: isActive || isCompleted
+                            ? activeColor
+                            : inactiveColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: iconData != null
+                            ? Icon(iconData, size: 14, color: Colors.white)
+                            : Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: index == steps.length - 1
+                            ? Colors.transparent
+                            : (index < currentStep
+                                  ? activeColor
+                                  : inactiveColor),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  steps[index]['title'] as String,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: AppSizes.textCaption,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                    color: isActive ? activeColor : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -293,52 +402,7 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: AppSizes.indicatorDotSize,
-              height: AppSizes.indicatorDotSize,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: AppSizes.indicatorDotSize,
-              height: AppSizes.indicatorDotSize,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: AppSizes.indicatorActiveWidth,
-              height: AppSizes.indicatorDotSize,
-              decoration: BoxDecoration(
-                color: AppColors.primaryMaroon,
-                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: AppSizes.indicatorDotSize,
-              height: AppSizes.indicatorDotSize,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: _buildHeaderAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.lg,

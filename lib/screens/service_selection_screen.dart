@@ -140,56 +140,106 @@ class _ServiceSelectionScreenState extends State<ServiceSelectionScreen> {
     );
   }
 
+  PreferredSizeWidget _buildHeaderAppBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      toolbarHeight: 80,
+      title: _buildStepIndicator(),
+    );
+  }
+
+  Widget _buildStepIndicator() {
+    final steps = [
+      {'title': 'Personal Info', 'icon': Icons.check},
+      {'title': 'Service Selection', 'icon': Icons.assignment_outlined},
+      {'title': 'Date/Time', 'icon': null},
+      {'title': 'Confirmation', 'icon': null},
+    ];
+
+    const int currentStep = 1; // Step 2 (0-indexed) highlighted
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(steps.length, (index) {
+          final isActive = index == currentStep;
+          final isCompleted = index < currentStep;
+
+          Color activeColor = AppColors.primaryMaroon;
+          Color inactiveColor = Colors.grey.shade400;
+
+          return Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: index == 0
+                            ? Colors.transparent
+                            : (index <= currentStep
+                                  ? activeColor
+                                  : inactiveColor),
+                      ),
+                    ),
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: isActive || isCompleted
+                            ? activeColor
+                            : inactiveColor,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          steps[index]['icon'] as IconData? ?? Icons.circle,
+                          size: steps[index]['icon'] != null ? 15 : 8,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 2,
+                        color: index == steps.length - 1
+                            ? Colors.transparent
+                            : (index < currentStep
+                                  ? activeColor
+                                  : inactiveColor),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  steps[index]['title'] as String,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppSizes.textCaption,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                    color: isActive ? activeColor : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: 24,
-              height: 8,
-              decoration: BoxDecoration(
-                color: AppColors.primaryMaroon,
-                borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: AppSizes.xxs),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: AppColors.divider,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ],
-        ),
-      ),
+      appBar: _buildHeaderAppBar(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSizes.lg,
