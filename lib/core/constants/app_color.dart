@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 class AppColors {
   const AppColors._();
 
-  // Primary Theme Colors
+  // Primary Theme Colors (Department of Motor Traffic Red)
   static const Color primary = Color(0xFF670000);
   static const Color primaryDark = Color(0xFF4A0000);
   static const Color primarySoft = Color(0xFF8E1E1E);
 
   // Surface & Background Colors
-  static const Color background = Color(0xFFF8F5F5);
+  static const Color background = Color(
+    0xFFFBF4F4,
+  ); // Calm light red background
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceAlt = Color(0xFFF3F4F6);
   static const Color card = Color(0xFFFFFFFF);
 
   // Form Controls & Borders
-  static const Color border = Color(0xFFE0E0E0);
+  static const Color border = Color(0xFFE8C8C8); // Soft red border outline
   static const Color divider = Color(0xFFE5E7EB);
   static const Color inputFill = Color(0xFFFFFFFF);
   static const Color inputBorder = border;

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../core/constants/app_color.dart';
 import '../core/constants/app_sizes.dart';
 import '../core/constants/app_text_styles.dart';
+import 'dmt_ui.dart';
 
 class LabeledTextField extends StatelessWidget {
   const LabeledTextField({
@@ -39,20 +41,26 @@ class LabeledTextField extends StatelessWidget {
       children: [
         Text(label, style: AppTextStyles.label),
         const SizedBox(height: AppSizes.sm),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          obscureText: obscureText,
-          readOnly: readOnly,
-          enabled: enabled,
-          onTap: onTap,
-          inputFormatters: inputFormatters,
-          style: AppTextStyles.body,
-          decoration: InputDecoration(
-            hintText: hintText,
-            suffixIcon: suffixIcon,
+        // Label is announced by screen readers together with the field
+        Semantics(
+          label: label,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: obscureText,
+            readOnly: readOnly,
+            enabled: enabled,
+            onTap: onTap,
+            inputFormatters: inputFormatters,
+            style: AppTextStyles.body,
+            // White fill: these fields sit directly on the tinted page
+            // background (unlike the cards on the booking screens).
+            decoration: dmtInputDecoration(
+              hintText ?? '',
+              suffixIcon: suffixIcon,
+            ).copyWith(fillColor: AppColors.surface),
+            validator: validator,
           ),
-          validator: validator,
         ),
       ],
     );

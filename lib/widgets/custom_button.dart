@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
     this.isPrimary = true,
     this.width,
     this.height = AppSizes.buttonHeight,
-    this.borderRadius = AppSizes.radiusMedium,
+    this.borderRadius = AppSizes.radiusMedium + 2,
     this.icon,
   });
 
@@ -52,67 +52,81 @@ class CustomButton extends StatelessWidget {
         );
       }
 
+      // FittedBox keeps long labels (e.g. CONFIRM BOOKING) on one line
+      // instead of overflowing when text size is increased.
+      final label = FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          text,
+          maxLines: 1,
+          textAlign: TextAlign.center,
+          style: AppTextStyles.button.copyWith(
+            color: textAndIconColor,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+
       if (icon != null) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: AppSizes.iconMedium, color: textAndIconColor),
-            const SizedBox(width: AppSizes.xs),
-            Text(
-              text,
-              textAlign: TextAlign.center,
-              style: AppTextStyles.button.copyWith(color: textAndIconColor),
-            ),
+            const SizedBox(width: AppSizes.sm),
+            Flexible(child: label),
           ],
         );
       }
 
-      return Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.button.copyWith(color: textAndIconColor),
-        ),
-      );
+      return Center(child: label);
     }
 
-    return SizedBox(
-      width: width ?? double.infinity,
-      height: height,
-      child: isPrimary
-          ? ElevatedButton(
-              onPressed: enabled ? onPressed : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: backgroundColor,
-                foregroundColor: foregroundColor,
-                disabledBackgroundColor: AppColors.disabled,
-                disabledForegroundColor: AppColors.textLight,
-                elevation: 0,
-                padding: EdgeInsets.zero,
-                minimumSize: Size(width ?? double.infinity, height),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(borderRadius),
+    );
+    const contentPadding = EdgeInsets.symmetric(horizontal: AppSizes.md);
+
+    return Semantics(
+      button: true,
+      enabled: enabled,
+      label: isLoading ? '$text, loading' : null,
+      child: SizedBox(
+        width: width ?? double.infinity,
+        height: height,
+        child: isPrimary
+            ? ElevatedButton(
+                onPressed: enabled ? onPressed : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: backgroundColor,
+                  foregroundColor: foregroundColor,
+                  // Keep brand colour while loading so it doesn't flash grey
+                  disabledBackgroundColor: isLoading
+                      ? backgroundColor
+                      : AppColors.disabled,
+                  disabledForegroundColor: AppColors.textLight,
+                  elevation: 0,
+                  padding: contentPadding,
+                  minimumSize: Size(width ?? double.infinity, height),
+                  shape: shape,
                 ),
-              ),
-              child: buildButtonContent(foregroundColor),
-            )
-          : OutlinedButton(
-              onPressed: enabled ? onPressed : null,
-              style: OutlinedButton.styleFrom(
-                foregroundColor: foregroundColor,
-                backgroundColor: backgroundColor,
-                side: BorderSide(color: borderColor, width: 1.5),
-                disabledForegroundColor: AppColors.disabled,
-                disabledBackgroundColor: AppColors.surface,
-                padding: EdgeInsets.zero,
-                minimumSize: Size(width ?? double.infinity, height),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
+                child: buildButtonContent(foregroundColor),
+              )
+            : OutlinedButton(
+                onPressed: enabled ? onPressed : null,
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: foregroundColor,
+                  backgroundColor: backgroundColor,
+                  side: BorderSide(color: borderColor, width: 1.5),
+                  disabledForegroundColor: AppColors.disabled,
+                  disabledBackgroundColor: AppColors.surface,
+                  padding: contentPadding,
+                  minimumSize: Size(width ?? double.infinity, height),
+                  shape: shape,
                 ),
+                child: buildButtonContent(foregroundColor),
               ),
-              child: buildButtonContent(foregroundColor),
-            ),
+      ),
     );
   }
 }

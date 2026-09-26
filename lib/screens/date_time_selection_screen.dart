@@ -6,6 +6,7 @@ import '../core/constants/app_color.dart';
 import '../core/constants/app_sizes.dart';
 import '../providers/appointment_provider.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/dmt_ui.dart';
 import 'confirmation_screen.dart';
 
 class DateTimeSelectionScreen extends StatefulWidget {
@@ -74,7 +75,10 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
   void _onNextPressed() {
     if (_selectedSlot == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an available time slot.')),
+        const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Please select an available time slot.'),
+        ),
       );
       return;
     }
@@ -84,127 +88,6 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const ConfirmationScreen()),
-    );
-  }
-
-  Widget _buildFieldLabel(String label) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSizes.xxs),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: AppSizes.textBody,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildHeaderAppBar() {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      toolbarHeight: 80,
-      title: _buildStepIndicator(),
-    );
-  }
-
-  Widget _buildStepIndicator() {
-    final steps = [
-      {'title': 'Personal Info', 'icon': Icons.check},
-      {'title': 'Service Selecti...', 'icon': Icons.assignment_outlined},
-      {'title': 'Date/Time', 'icon': Icons.calendar_today_outlined},
-      {'title': 'Confirmation', 'icon': null},
-    ];
-
-    const int currentStep = 2; // Step 3 (0-indexed) highlighted
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(steps.length, (index) {
-          final isActive = index == currentStep;
-          final isCompleted = index < currentStep;
-
-          Color activeColor = AppColors.primaryMaroon;
-          Color inactiveColor = Colors.grey.shade400;
-
-          IconData? iconData = steps[index]['icon'] as IconData?;
-          if (isCompleted && index == 0) {
-            iconData = Icons.check;
-          }
-
-          return Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 2,
-                        color: index == 0
-                            ? Colors.transparent
-                            : (index <= currentStep
-                                  ? activeColor
-                                  : inactiveColor),
-                      ),
-                    ),
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color: isActive || isCompleted
-                            ? activeColor
-                            : inactiveColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: iconData != null
-                            ? Icon(iconData, size: 14, color: Colors.white)
-                            : Container(
-                                width: 6,
-                                height: 6,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: 2,
-                        color: index == steps.length - 1
-                            ? Colors.transparent
-                            : (index < currentStep
-                                  ? activeColor
-                                  : inactiveColor),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  steps[index]['title'] as String,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: AppSizes.textCaption,
-                    fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                    color: isActive ? activeColor : AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
-      ),
     );
   }
 
@@ -218,109 +101,141 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    final cardBgColor = isSelected
-        ? AppColors.primaryMaroon
-        : AppColors.surface;
-    final textColor = isSelected ? Colors.white : AppColors.textPrimary;
+    final textColor = isSelected ? AppColors.textLight : AppColors.textPrimary;
     final subTextColor = isSelected ? Colors.white70 : AppColors.textSecondary;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-      child: Container(
-        padding: const EdgeInsets.all(AppSizes.md),
-        decoration: BoxDecoration(
-          color: cardBgColor,
-          borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-          border: Border.all(
-            color: isSelected ? AppColors.primaryMaroon : AppColors.inputBorder,
-            width: 1.2,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  icon,
-                  color: isSelected ? Colors.orangeAccent : Colors.orange,
-                  size: AppSizes.iconSmall,
-                ),
-                const SizedBox(width: AppSizes.xs),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: AppSizes.textBody,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSizes.md),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatBox(
-                    label: 'TOTAL SLOTS',
-                    value: '$totalSlots',
-                    isSelected: isSelected,
-                  ),
-                ),
-                const SizedBox(width: AppSizes.xs),
-                Expanded(
-                  child: _buildStatBox(
-                    label: 'TOKEN ISSUED',
-                    value: '$tokenIssued',
-                    isSelected: isSelected,
-                  ),
-                ),
-                const SizedBox(width: AppSizes.xs),
-                Expanded(
-                  child: _buildStatBox(
-                    label: 'SLOTS OPEN',
-                    value: '$slotsOpen',
-                    isSelected: isSelected,
-                    highlightColor: Colors.green,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSizes.md),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Capacity used',
-                  style: TextStyle(
-                    fontSize: AppSizes.textCaption,
-                    color: subTextColor,
-                  ),
-                ),
-                Text(
-                  '${(capacityPercent * 100).toInt()}%',
-                  style: TextStyle(
-                    fontSize: AppSizes.textCaption,
-                    fontWeight: FontWeight.bold,
-                    color: subTextColor,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSizes.xxs),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-              child: LinearProgressIndicator(
-                value: capacityPercent.clamp(0.0, 1.0),
-                minHeight: 6,
-                backgroundColor: isSelected
-                    ? Colors.white24
-                    : AppColors.divider,
-                color: isSelected ? Colors.amber : AppColors.primaryMaroon,
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+          child: AnimatedContainer(
+            duration: dmtMotion(context),
+            padding: const EdgeInsets.all(AppSizes.lg),
+            decoration: BoxDecoration(
+              color: isSelected ? AppColors.primaryMaroon : AppColors.surface,
+              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+              border: Border.all(
+                color: isSelected ? AppColors.primaryMaroon : kDmtFieldBorder,
+                width: isSelected ? 1.5 : 1,
               ),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.25),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ]
+                  : null,
             ),
-          ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(AppSizes.sm),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? Colors.white.withValues(alpha: 0.16)
+                            : AppColors.warning.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                      ),
+                      child: Icon(
+                        icon,
+                        color: isSelected ? Colors.amber : AppColors.warning,
+                        size: AppSizes.iconMedium,
+                      ),
+                    ),
+                    const SizedBox(width: AppSizes.md),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: AppSizes.textLabel,
+                          fontWeight: FontWeight.w700,
+                          color: textColor,
+                        ),
+                      ),
+                    ),
+                    // Selection is shown by icon as well as colour
+                    if (isSelected)
+                      const Icon(
+                        Icons.check_circle,
+                        color: AppColors.textLight,
+                        size: AppSizes.iconLarge,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: AppSizes.md),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatBox(
+                        label: 'Total slots',
+                        value: '$totalSlots',
+                        isSelected: isSelected,
+                      ),
+                    ),
+                    const SizedBox(width: AppSizes.sm),
+                    Expanded(
+                      child: _buildStatBox(
+                        label: 'Token issued',
+                        value: '$tokenIssued',
+                        isSelected: isSelected,
+                      ),
+                    ),
+                    const SizedBox(width: AppSizes.sm),
+                    Expanded(
+                      child: _buildStatBox(
+                        label: 'Slots open',
+                        value: '$slotsOpen',
+                        isSelected: isSelected,
+                        highlightColor: AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSizes.md),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Capacity used',
+                      style: TextStyle(
+                        fontSize: AppSizes.textCaption,
+                        color: subTextColor,
+                      ),
+                    ),
+                    Text(
+                      '${(capacityPercent * 100).toInt()}%',
+                      style: TextStyle(
+                        fontSize: AppSizes.textCaption,
+                        fontWeight: FontWeight.bold,
+                        color: subTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSizes.xxs),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+                  child: LinearProgressIndicator(
+                    value: capacityPercent.clamp(0.0, 1.0),
+                    minHeight: 6,
+                    backgroundColor: isSelected
+                        ? Colors.white24
+                        : AppColors.divider,
+                    color: isSelected ? Colors.amber : AppColors.primaryMaroon,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -334,14 +249,16 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: AppSizes.xs,
-        horizontal: AppSizes.xxs,
+        vertical: AppSizes.sm,
+        horizontal: AppSizes.xs,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.white.withAlpha(30) : AppColors.inputFill,
-        borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+        color: isSelected
+            ? Colors.white.withValues(alpha: 0.14)
+            : AppColors.background,
+        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
         border: highlightColor != null && !isSelected
-            ? Border.all(color: Colors.green.shade200)
+            ? Border.all(color: AppColors.success.withValues(alpha: 0.35))
             : null,
       ),
       child: Column(
@@ -352,18 +269,18 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
               fontSize: AppSizes.textSubtitle,
               fontWeight: FontWeight.bold,
               color: isSelected
-                  ? Colors.white
+                  ? AppColors.textLight
                   : (highlightColor ?? AppColors.textPrimary),
             ),
           ),
-          const SizedBox(height: AppSizes.xxs),
+          const SizedBox(height: 2),
           Text(
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.white70 : AppColors.textHint,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: isSelected ? Colors.white70 : AppColors.textMuted,
             ),
           ),
         ],
@@ -402,218 +319,250 @@ class _DateTimeSelectionScreenState extends State<DateTimeSelectionScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _buildHeaderAppBar(),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.lg,
-          vertical: AppSizes.sm,
-        ),
+      body: SafeArea(
+        bottom: false,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Choose appointment date and time slot',
-              style: TextStyle(
-                fontSize: AppSizes.textSubtitle,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
+            const Padding(
+              padding: EdgeInsets.fromLTRB(
+                AppSizes.lg,
+                AppSizes.md,
+                AppSizes.lg,
+                AppSizes.sm,
               ),
+              child: DmtStepHeader(currentStep: 2),
             ),
-            const SizedBox(height: AppSizes.lg),
-
-            // Date Selection Box
-            _buildFieldLabel('Date'),
-            InkWell(
-              onTap: () => _selectDate(context),
-              borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSizes.md,
-                  vertical: AppSizes.sm,
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSizes.lg,
+                  AppSizes.sm,
+                  AppSizes.lg,
+                  AppSizes.xl,
                 ),
-                decoration: BoxDecoration(
-                  color: AppColors.inputFill,
-                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  border: Border.all(color: AppColors.inputBorder, width: 1.2),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      formattedDateStr,
-                      style: const TextStyle(
-                        fontSize: AppSizes.textBody,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryMaroon,
+                    const DmtHeroBanner(
+                      icon: Icons.event_available_outlined,
+                      title: 'Choose appointment date and time slot',
+                    ),
+                    const SizedBox(height: AppSizes.lg),
+
+                    // Date Selection Box
+                    const DmtFieldLabel('Date'),
+                    Semantics(
+                      button: true,
+                      label:
+                          'Appointment date $formattedDateStr. Double tap to change.',
+                      child: ExcludeSemantics(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () => _selectDate(context),
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMd + 2,
+                            ),
+                            child: Container(
+                              constraints: const BoxConstraints(minHeight: 52),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSizes.md,
+                                vertical: AppSizes.sm,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusMd + 2,
+                                ),
+                                border: Border.all(color: kDmtFieldBorder),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.event_outlined,
+                                    color: AppColors.primarySoft,
+                                    size: AppSizes.iconMedium,
+                                  ),
+                                  const SizedBox(width: AppSizes.md),
+                                  Expanded(
+                                    child: Text(
+                                      formattedDateStr,
+                                      style: const TextStyle(
+                                        fontSize: AppSizes.textLabel,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primaryMaroon,
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: AppColors.textSecondary,
+                                    size: AppSizes.iconSmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                    const Icon(
-                      Icons.calendar_today_outlined,
-                      color: AppColors.textHint,
-                      size: AppSizes.iconSmall,
+                    const SizedBox(height: AppSizes.xl),
+
+                    const DmtFieldLabel('Time'),
+
+                    // Dynamic Morning Session Card
+                    _buildSessionCard(
+                      title: 'Morning Session',
+                      icon: Icons.wb_sunny_outlined,
+                      totalSlots: _totalMorningSlots,
+                      tokenIssued: morningIssued,
+                      slotsOpen: morningOpen,
+                      capacityPercent: morningCapacity,
+                      isSelected: _selectedSession == 'morning',
+                      onTap: () {
+                        setState(() {
+                          _selectedSession = 'morning';
+                          _selectedSlot = null;
+                        });
+                      },
                     ),
+
+                    const SizedBox(height: AppSizes.md),
+
+                    // Dynamic Afternoon Session Card
+                    _buildSessionCard(
+                      title: 'Afternoon Session',
+                      icon: Icons.nightlight_round_outlined,
+                      totalSlots: _totalAfternoonSlots,
+                      tokenIssued: afternoonIssued,
+                      slotsOpen: afternoonOpen,
+                      capacityPercent: afternoonCapacity,
+                      isSelected: _selectedSession == 'afternoon',
+                      onTap: () {
+                        setState(() {
+                          _selectedSession = 'afternoon';
+                          _selectedSlot = null;
+                        });
+                      },
+                    ),
+
+                    // Dynamic Sub Time Slots Section
+                    if (_selectedSession != null) ...[
+                      const SizedBox(height: AppSizes.xl),
+                      const DmtFieldLabel('Available Time Slots'),
+                      provider.isLoading
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(AppSizes.md),
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primaryMaroon,
+                                ),
+                              ),
+                            )
+                          : activeSlots.isEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: AppSizes.sm,
+                              ),
+                              child: Text(
+                                'No slots available for this session.',
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: AppSizes.textBody,
+                                ),
+                              ),
+                            )
+                          : Wrap(
+                              spacing: AppSizes.sm,
+                              runSpacing: AppSizes.sm,
+                              children: activeSlots.map((slot) {
+                                final isSlotSelected = _selectedSlot == slot;
+                                return Semantics(
+                                  button: true,
+                                  selected: isSlotSelected,
+                                  child: Material(
+                                    color: isSlotSelected
+                                        ? AppColors.primaryMaroon
+                                        : AppColors.surface,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        AppSizes.radiusMd,
+                                      ),
+                                      side: BorderSide(
+                                        color: isSlotSelected
+                                            ? AppColors.primaryMaroon
+                                            : kDmtFieldBorder,
+                                      ),
+                                    ),
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedSlot = slot;
+                                        });
+                                      },
+                                      borderRadius: BorderRadius.circular(
+                                        AppSizes.radiusMd,
+                                      ),
+                                      child: ConstrainedBox(
+                                        constraints: const BoxConstraints(
+                                          minHeight: 44,
+                                          minWidth: 96,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: AppSizes.md,
+                                            vertical: AppSizes.sm,
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              if (isSlotSelected) ...[
+                                                const Icon(
+                                                  Icons.check,
+                                                  size: AppSizes.iconSmall,
+                                                  color: AppColors.textLight,
+                                                ),
+                                                const SizedBox(
+                                                  width: AppSizes.xs,
+                                                ),
+                                              ],
+                                              Text(
+                                                slot,
+                                                style: TextStyle(
+                                                  fontSize: AppSizes.textBody,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isSlotSelected
+                                                      ? AppColors.textLight
+                                                      : AppColors.textPrimary,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                    ],
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: AppSizes.lg),
-
-            _buildFieldLabel('Time'),
-            const SizedBox(height: AppSizes.xs),
-
-            // Dynamic Morning Session Card
-            _buildSessionCard(
-              title: 'Morning Session',
-              icon: Icons.wb_sunny_outlined,
-              totalSlots: _totalMorningSlots,
-              tokenIssued: morningIssued,
-              slotsOpen: morningOpen,
-              capacityPercent: morningCapacity,
-              isSelected: _selectedSession == 'morning',
-              onTap: () {
-                setState(() {
-                  _selectedSession = 'morning';
-                  _selectedSlot = null;
-                });
-              },
-            ),
-
-            const SizedBox(height: AppSizes.md),
-
-            // Dynamic Afternoon Session Card
-            _buildSessionCard(
-              title: 'Afternoon Session',
-              icon: Icons.nightlight_round_outlined,
-              totalSlots: _totalAfternoonSlots,
-              tokenIssued: afternoonIssued,
-              slotsOpen: afternoonOpen,
-              capacityPercent: afternoonCapacity,
-              isSelected: _selectedSession == 'afternoon',
-              onTap: () {
-                setState(() {
-                  _selectedSession = 'afternoon';
-                  _selectedSlot = null;
-                });
-              },
-            ),
-
-            // Dynamic Sub Time Slots Section
-            if (_selectedSession != null) ...[
-              const SizedBox(height: AppSizes.lg),
-              _buildFieldLabel('Available Time Slots'),
-              const SizedBox(height: AppSizes.xs),
-              provider.isLoading
-                  ? const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(AppSizes.md),
-                        child: CircularProgressIndicator(
-                          color: AppColors.primaryMaroon,
-                        ),
-                      ),
-                    )
-                  : activeSlots.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: AppSizes.sm),
-                      child: Text(
-                        'No slots available for this session.',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: AppSizes.textCaption,
-                        ),
-                      ),
-                    )
-                  : Wrap(
-                      spacing: AppSizes.xs,
-                      runSpacing: AppSizes.xs,
-                      children: activeSlots.map((slot) {
-                        final isSlotSelected = _selectedSlot == slot;
-                        return InkWell(
-                          onTap: () {
-                            setState(() {
-                              _selectedSlot = slot;
-                            });
-                          },
-                          borderRadius: BorderRadius.circular(
-                            AppSizes.radiusSm,
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSizes.md,
-                              vertical: AppSizes.xs,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSlotSelected
-                                  ? AppColors.primaryMaroon
-                                  : AppColors.surface,
-                              borderRadius: BorderRadius.circular(
-                                AppSizes.radiusSm,
-                              ),
-                              border: Border.all(
-                                color: isSlotSelected
-                                    ? AppColors.primaryMaroon
-                                    : AppColors.inputBorder,
-                              ),
-                            ),
-                            child: Text(
-                              slot,
-                              style: TextStyle(
-                                fontSize: AppSizes.textCaption,
-                                fontWeight: FontWeight.bold,
-                                color: isSlotSelected
-                                    ? Colors.white
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-            ],
-
-            const SizedBox(height: AppSizes.xl),
-
-            // Action Buttons (BACK & NEXT)
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: AppSizes.buttonHeight,
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                          color: AppColors.primaryMaroon,
-                          width: 1.5,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            AppSizes.radiusMd,
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        'BACK',
-                        style: TextStyle(
-                          color: AppColors.primaryMaroon,
-                          fontWeight: FontWeight.bold,
-                          fontSize: AppSizes.textBody,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppSizes.md),
-                Expanded(
-                  child: CustomButton(
-                    text: 'NEXT',
-                    width: double.infinity,
-                    height: AppSizes.buttonHeight,
-                    onPressed: _onNextPressed,
-                  ),
-                ),
-              ],
-            ),
           ],
+        ),
+      ),
+      bottomNavigationBar: DmtActionBar(
+        onBack: () => Navigator.pop(context),
+        primary: CustomButton(
+          text: 'NEXT',
+          width: double.infinity,
+          height: AppSizes.buttonHeight,
+          onPressed: _onNextPressed,
         ),
       ),
     );
