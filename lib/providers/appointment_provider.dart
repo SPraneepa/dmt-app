@@ -16,10 +16,17 @@ class AppointmentProvider extends ChangeNotifier {
   String selectedDistrict = '';
   String selectedDate = '';
   String selectedTimeSlot = '';
+  int totalMorningCapacity = 30;
+  int totalAfternoonCapacity = 20;
 
   List<String> availableSlots = [];
   List<AppointmentModel> myBookings = [];
   bool isLoading = false;
+
+  // My Bookings screen state. Kept separate from `isLoading`, which the slot
+  // picker and the CONFIRM BOOKING button already use.
+  bool isLoadingBookings = false;
+  String? bookingsError;
 
   AppointmentModel? get activeBooking =>
       myBookings.isNotEmpty ? myBookings.last : null;
@@ -109,6 +116,37 @@ class AppointmentProvider extends ChangeNotifier {
     }
 
     return success;
+  }
+
+  /// Loads bookings through the repository (mock today, backend later) and
+  /// merges them into [myBookings]. Additive only: nothing is removed or
+  /// reordered, so [activeBooking] keeps behaving as before.
+  Future<void> loadMyBookings() async {
+    // The repository looks bookings up by NIC, which is only known once the
+    // applicant form has been filled. Until then show what we already have.
+    if (nic.isEmpty) return;
+
+    isLoadingBookings = true;
+    bookingsError = null;
+    notifyListeners();
+
+    try {
+      final fetched = await _repository.fetchUserBookings(nic);
+
+      String keyOf(AppointmentModel b) => '${b.nic}|${b.date}|${b.timeSlot}';
+      final existingKeys = myBookings.map(keyOf).toSet();
+      for (final booking in fetched) {
+        if (existingKeys.add(keyOf(booking))) {
+          myBookings.add(booking);
+        }
+      }
+    } catch (e) {
+      bookingsError =
+          'Could not load your bookings. Please check your connection and try again.';
+    } finally {
+      isLoadingBookings = false;
+      notifyListeners();
+    }
   }
 
   /// Class-level method to reset active booking selections

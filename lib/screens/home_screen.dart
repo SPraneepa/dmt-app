@@ -1,4 +1,5 @@
 import 'package:dmt_app/screens/applicant_details_screen.dart';
+import 'my_bookings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -80,7 +81,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 
@@ -608,7 +609,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
+  Widget _buildBottomNavigationBar(BuildContext context) {
     return NavigationBarTheme(
       data: NavigationBarThemeData(
         backgroundColor: AppColors.surface,
@@ -631,7 +632,15 @@ class HomeScreen extends StatelessWidget {
       ),
       child: NavigationBar(
         selectedIndex: 0,
-        destinations: [
+        onDestinationSelected: (index) {
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyBookingsScreen()),
+            );
+          }
+        },
+        destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
